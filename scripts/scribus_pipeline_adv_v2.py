@@ -322,86 +322,96 @@ def flow_blocks_into_body(blocks, body_frame_name, log_file=None):
 
 def handle_overflow(layout_map, body_frame_name, log_file=None):
     """
-    Handle multi-page overflow using the continuation body frame defined
-    on page 2 in layout_map.yaml (e.g., BodyTextCONT).
-
-    Algorithm:
-    - Find the continuation frame name for page 2 from layout_map.
-    - Link BodyTextMP -> BodyTextCONT.
-    - Use BodyTextCONT's geometry as the pattern for all additional pages.
-    - While the *head* of the chain (body_frame_name) still overflows:
-        - Append a new page.
-        - Create a new text frame at the same position/size.
-        - Link previous last frame -> new frame.
-        - Re-layout the chain.
+    Overflow handler that uses layout_map.yaml for:
+    - continuation frame name
+    - continuation master page
+    - geometry source
     """
 
-    pages_cfg = layout_map.get("sop_to_layout_map", {}).get("pages", [])
-    if len(pages_cfg) < 2:
-        log("No second page configuration in layout_map; overflow handling skipped.", log_file)
+    cfg = layout_map.get("sop_layout")
+    if not cfg:
+        log("ERROR: sop_layout section missing in layout_map.yaml", log_file)
         return
 
-    # Get continuation frame mapping from the second page definition
-    second_page_roles = pages_cfg[1].get("roles", {})
-    body_role = second_page_roles.get("body")
-    if not isinstance(body_role, dict):
-        log("Second page has no 'body' role in layout_map; overflow handling skipped.", log_file)
+    masters = cfg.get("masters", {})
+    cont_master = masters.get("continuation_pages")
+
+    pages = cfg.get("pages", [])
+    if len(pages) < 2:
+        log("ERROR: layout_map.yaml does not define page 2", log_file)
         return
 
-    cont_frame_name = body_role.get("frame")
+    # Page 2 details
+    page2_cfg = pages[1]
+    page2_roles = page2_cfg.get("roles", {})
+    page2_body_cfg = page2_roles.get("body", {})
+    cont_frame_name = page2_body_cfg.get("frame")
+
     if not cont_frame_name or not scribus.objectExists(cont_frame_name):
-        log(f"Continuation frame '{cont_frame_name}' not found in document; overflow handling skipped.", log_file)
+        log(f"Continuation frame '{cont_frame_name}' not found.", log_file)
         return
 
-    # Link the main body frame to the continuation frame on page 2 (once)
+    # Link main body to page-2 body if not already linked
     try:
         scribus.linkTextFrames(body_frame_name, cont_frame_name)
-        log(f"Linked body chain: {body_frame_name} → {cont_frame_name}", log_file)
+        log(f"Linked: {body_frame_name} → {cont_frame_name}", log_file)
     except Exception as e:
-        log(f"Failed to link {body_frame_name} to {cont_frame_name}: {e}", log_file)
-        return
+        log(f"Link failed (likely already linked): {e}", log_file)
 
-    # Use the continuation frame geometry as the template for all further frames
+    # Use page 2's body frame geometry as template
     x, y = scribus.getPosition(cont_frame_name)
     w, h = scribus.getSize(cont_frame_name)
+
     last_frame = cont_frame_name
 
-    # Initial layout so we get a correct overflow status
+    # Layout once to get overflow status
     scribus.layoutText(body_frame_name)
 
-    # IMPORTANT:
-    # Check overflow on the *head* of the chain (body_frame_name),
-    # not on the last frame.
-    safety_counter = 0
-    max_pages = 50  # hard safety to avoid infinite loops
+    safety = 0
+    MAX_PAGES = 50
 
-    while scribus.textOverflows(body_frame_name):
-        safety_counter += 1
-        if safety_counter > max_pages:
-            log("Overflow loop aborted: reached max_pages safety limit.", log_file)
+    while True:
+        over_head = scribus.textOverflows(body_frame_name)
+        over_tail = scribus.textOverflows(last_frame)
+
+        log(f"Overflow check: head={over_head}, tail={over_tail}", log_file)
+
+        if not over_head and not over_tail:
             break
 
-        # Append a new page at the end
+        safety += 1
+        if safety > MAX_PAGES:
+            log("Safety limit hit, stopping overflow loop.", log_file)
+            break
+
+        # Create new continuation page using layout_map.yaml master
         try:
-            new_page = scribus.newPage(-1)   # typical API: -1 = append at end
+            new_page = scribus.newPage(-1, cont_master)
+            log(f"Created new page with master '{cont_master}'", log_file)
         except TypeError:
-            # Older Scribus APIs sometimes don't return a value; fallback:
             new_page = scribus.pageCount()
+            try:
+                scribus.applyMasterPage(cont_master, new_page)
+            except:
+                log("Failed to apply master page.", log_file)
 
         scribus.gotoPage(new_page)
 
-        # Create a new continuation frame on this new page
-        new_frame_name = scribus.createText(x, y, w, h)
-        log(f"Created continuation frame '{new_frame_name}' on page {new_page}", log_file)
+        # Create new text frame with same geometry as page 2
+        new_frame = scribus.createText(x, y, w, h)
+        log(f"Created continuation frame '{new_frame}' on page {new_page}", log_file)
 
-        # Link the previous last frame to the new frame in the chain
-        scribus.linkTextFrames(last_frame, new_frame_name)
-        last_frame = new_frame_name
+        # Link last → new
+        scribus.linkTextFrames(last_frame, new_frame)
+        last_frame = new_frame
 
-        # Re-layout the entire chain starting from the first frame
+        # Re-layout story
         scribus.layoutText(body_frame_name)
 
-    log("Overflow handling complete; all text fits into the frame chain or safety limit reached.", log_file)
+    log("Overflow handling complete.", log_file)
+
+
+
 
 
 
@@ -507,7 +517,7 @@ def main():
     # Handle multi-page overflow using page-2 continuation geometry
     handle_overflow(layout_map, body_frame_name, log_file=log_file)
 
-    # Export PDF using the hard-coded output_pdf path
+    # Export PDF to output_pdf (no use of 'job' dict)
     pdf_path = output_pdf
     if pdf_path:
         pdf = scribus.PDFfile()

@@ -1,4 +1,10 @@
 sop_to_layout_map:
+
+
+  masters:
+    first_page: "MP_FIRST"
+    continuation_pages: "MP_CONT"
+
   pages:
 
     # ─────────────────────────────
