@@ -179,60 +179,190 @@ def load_docbook(docbook_path):
     tree = ET.parse(docbook_path)
     return tree.getroot()
 
+def get_full_text(elem):
+    """
+    Return all text content from an element, with internal whitespace
+    normalized so that Scribus doesn't see hard line breaks from the
+    pretty-printed DocBook.
 
-def get_full_text(el):
-    """Recursively collect text from an ElementTree element."""
+    - Collapses runs of whitespace (spaces, tabs, newlines) into a single space.
+    - Trims leading and trailing whitespace.
+    """
+    if elem is None:
+        return ""
+    # Collect all text nodes
     parts = []
-    if el.text:
-        parts.append(el.text)
-    for child in el:
-        parts.append(get_full_text(child))
-        if child.tail:
-            parts.append(child.tail)
-    return "".join(parts)
+    for t in elem.itertext():
+        if t is not None:
+            parts.append(t)
+    raw = "".join(parts)
+    # Normalize any whitespace sequences (including newlines) to a single space
+    normalized = re.sub(r"\s+", " ", raw)
+    return normalized.strip()
+
 
 
 def build_blocks(root):
     """
-    Build a simple list of blocks from DocBook:
-    - 'heading' blocks with level (1..N)
+    Build an ordered list of content blocks from DocBook.
+
+    Blocks:
+    - 'heading' blocks with a level (1..6)
     - 'paragraph' blocks with text
-    This is intentionally minimal but deterministic.
+
+    This implementation:
+    - Treats the document title as H1 (if present).
+    - Walks sections in document order, respecting nesting for heading levels.
+    - Captures preface paragraphs before the first section.
+    - Captures direct paragraphs under each section.
+    - Captures itemized and ordered list items as paragraphs, with bullet/number prefixes.
+    - Walks through blockquotes instead of skipping them.
+    - Falls back to top-level paragraphs/lists if no sections exist.
     """
+    # Namespace detection
     ns = {"db": root.tag.split('}')[0].strip('{')} if '}' in root.tag else {}
     blocks = []
 
-    # Document title as H1 if present
+    def add_heading(text: str, level: int) -> None:
+        if not text:
+            return
+        lvl = max(1, min(int(level), 6))
+        blocks.append({"type": "heading", "level": lvl, "text": text})
+
+    def add_paragraph(text: str) -> None:
+        if not text:
+            return
+        blocks.append({"type": "paragraph", "text": text})
+
+    def tag_local(el):
+        if '}' in el.tag:
+            return el.tag.split('}', 1)[1]
+        return el.tag
+
+    # 1) Document title as H1 (if present in <article><info><title> etc.)
     title_el = root.find("db:title", ns)
     if title_el is not None:
         text = get_full_text(title_el).strip()
         if text:
-            blocks.append({"type": "heading", "level": 1, "text": text})
+            add_heading(text, 1)
 
-    # Walk sections in document order
-    for section in root.findall(".//db:section", ns):
-        sec_title = section.find("db:title", ns)
+    # Helper to render lists as paragraphs
+    def handle_list(list_el, kind: str, indent_level: int = 0):
+        """
+        kind: 'bullet' or 'numbered'
+        indent_level: nesting depth (0 = top-level, 1 = nested, etc.)
+        """
+        indent = "  " * indent_level
+        counter = 1
+
+        for li in list_el.findall("db:listitem", ns):
+            for child in list(li):
+                local = tag_local(child)
+
+                if local == "para":
+                    text = get_full_text(child).strip()
+                    if not text:
+                        continue
+                    if kind == "bullet":
+                        prefix = "• "
+                    else:
+                        prefix = f"{counter}. "
+                    add_paragraph(f"{indent}{prefix}{text}")
+                    if kind == "numbered":
+                        counter += 1
+
+                elif local == "itemizedlist":
+                    handle_list(child, kind="bullet", indent_level=indent_level + 1)
+
+                elif local == "orderedlist":
+                    handle_list(child, kind="numbered", indent_level=indent_level + 1)
+
+                elif local == "blockquote":
+                    # Allow nested blockquotes inside list items
+                    process_block_node(child, indent_level=indent_level)
+
+    def process_block_node(node, indent_level: int = 0):
+        """
+        Generic block-level handler. Deals with:
+        - para
+        - itemizedlist / orderedlist
+        - blockquote (recursively)
+        """
+        local = tag_local(node)
+
+        if local == "para":
+            text = get_full_text(node).strip()
+            if text:
+                add_paragraph(text)
+            return
+
+        if local == "itemizedlist":
+            handle_list(node, kind="bullet", indent_level=indent_level)
+            return
+
+        if local == "orderedlist":
+            handle_list(node, kind="numbered", indent_level=indent_level)
+            return
+
+        if local == "blockquote":
+            # Walk children of the blockquote in order
+            for child in list(node):
+                process_block_node(child, indent_level=indent_level)
+            return
+
+        # Other container-like elements could be added here later (admonitions, etc.)
+
+    # 2) Handle preface content before the first <section> (e.g., intro lists/paras)
+    children = list(root)
+    for child in children:
+        local = tag_local(child)
+        if local == "section":
+            break  # stop at the first section; remaining content handled by section walker
+
+        # Skip <info> etc.
+        if local in ("info", "title"):
+            continue
+
+        process_block_node(child, indent_level=0)
+
+    # 3) Walk a section, preserving heading hierarchy and content order
+    def walk_section(section_el, base_level: int = 2):
+        # Section title (direct child <title>)
+        sec_title = section_el.find("db:title", ns)
         if sec_title is not None:
             text = get_full_text(sec_title).strip()
             if text:
-                # Use section depth as heading level (clamped between 2 and 6)
-                level = 2
-                blocks.append({"type": "heading", "level": level, "text": text})
+                add_heading(text, base_level)
 
-        # Paragraphs inside section
-        for para in section.findall(".//db:para", ns):
-            text = get_full_text(para).strip()
-            if text:
-                blocks.append({"type": "paragraph", "text": text})
+        # Walk direct children in document order
+        for child in list(section_el):
+            local = tag_local(child)
 
-    # Fallback: any para not caught above
+            if local == "title":
+                continue  # already handled
+
+            if local == "section":
+                # Nested section => deeper heading level
+                walk_section(child, base_level + 1)
+                continue
+
+            # All other block-level content is handled generically
+            process_block_node(child, indent_level=0)
+
+    # 4) Walk all top-level sections under the root
+    top_sections = root.findall("db:section", ns)
+    for sec in top_sections:
+        walk_section(sec, base_level=2)
+
+    # 5) Fallback: if there were no sections at all, capture top-level blocks
     if not blocks:
-        for para in root.findall(".//db:para", ns):
-            text = get_full_text(para).strip()
-            if text:
-                blocks.append({"type": "paragraph", "text": text})
+        for child in list(root):
+            process_block_node(child, indent_level=0)
 
     return blocks
+
+
+
 
 
 # ─────────────────────────────────────────────────────────────
@@ -257,6 +387,65 @@ def safe_format(template, meta):
         return template.format_map(SafeDict(meta))
     except Exception:
         return template
+
+def resolve_document_state(meta, layout_profile):
+    """
+    Resolve the normalized document state ('active', 'draft', 'retired')
+    using layout_profile.document_state and the document metadata.
+    """
+    ds = (layout_profile.get("document_state") or {}) if layout_profile else {}
+    meta_key = ds.get("meta_key") or "status"
+    treat_missing_as = (ds.get("treat_missing_as") or "draft").lower()
+
+    raw_value = str(meta.get(meta_key, "")).strip() if meta else ""
+    if not raw_value:
+        state = treat_missing_as
+    else:
+        raw_lower = raw_value.lower()
+        def in_list(key):
+            for v in ds.get(key, []):
+                try:
+                    if raw_lower == str(v).lower():
+                        return True
+                except Exception:
+                    continue
+            return False
+
+        if in_list("active_values"):
+            state = "active"
+        elif in_list("draft_values"):
+            state = "draft"
+        elif in_list("retired_values"):
+            state = "retired"
+        else:
+            state = treat_missing_as
+
+    # Store normalized status back into meta for downstream use
+    if meta is not None:
+        meta["status_normalized"] = state
+    return state
+
+
+def should_emit_output(mode, doc_state):
+    """
+    Decide whether a given output should be produced based on its mode
+    and the normalized document state.
+
+    mode:
+      - 'DISABLED'    -> never
+      - 'ACTIVE_ONLY' -> only when doc_state == 'active'
+      - 'ALWAYS'      -> always
+    """
+    if mode is None:
+        mode = "DISABLED"
+    mode_upper = str(mode).upper()
+    if mode_upper == "DISABLED":
+        return False
+    if mode_upper == "ACTIVE_ONLY":
+        return doc_state == "active"
+    # Default / 'ALWAYS'
+    return True
+
 
 
 # ─────────────────────────────────────────────────────────────
@@ -317,7 +506,8 @@ def flow_blocks_into_body(layout_profile, blocks, body_frame_name, log_file=None
     Overflow continuation is handled separately by handle_overflow().
     """
     if not scribus.objectExists(body_frame_name):
-        log(f"Body frame {body_frame_name} not found.", log_file)
+        log(f"Body frame {body_frame_name} not found in the open Scribus document.", log_file)
+        error_dialog(f"Body frame '{body_frame_name}' not found in the open Scribus document. Check that the frame name matches the layout profile.")
         return
 
     # Resolve style mappings
@@ -485,46 +675,101 @@ def main():
     # Layout profile directory
     profile_dir = os.path.join(base_dir, "templates", "profiles")
 
-    # Logs directory
-    logs_dir = os.path.join(base_dir, "logs")
-    os.makedirs(logs_dir, exist_ok=True)
-    log_file = os.path.join(logs_dir, "SOP-200_layout_profile.log")
-
-    # Output PDF directory
-    pdf_dir = os.path.join(base_dir, "published", "pdf")
-    os.makedirs(pdf_dir, exist_ok=True)
-
-    log("Starting advanced pipeline run (layout‑profile driven).", log_file)
-
-    # Load metadata
+    # Load metadata (Markdown front matter)
     try:
         raw_meta = load_markdown_metadata(md_path)
     except Exception as e:
         tb = traceback.format_exc()
         error_dialog(f"Failed to load Markdown metadata: {e}")
-        log(f"Markdown metadata error: {tb}", log_file)
+        # No log file has been resolved yet; best effort to print to console
+        print(tb)
         return
 
     meta = prepare_meta(raw_meta)
 
+    # At this point we do not yet know the layout profile. Logging and outputs
+    # will be configured *after* the profile is loaded and the document state is known.
     # Resolve pipeline profile → layout profile
+    # Primary profile comes from metadata (pipeline_profile_active); fall back to 'sop_default'.
     pipeline_profile = meta.get("pipeline_profile_active") or "sop_default"
     profile_filename = f"layout_profile_{pipeline_profile}.json"
     profile_path = os.path.join(profile_dir, profile_filename)
 
+    # Attempt to load requested profile; if it fails AND is not the default, fall back to 'sop_default'.
+    # NOTE: Logging is not yet fully configured; errors here are reported via dialog and console.
     try:
         layout_profile = load_layout_profile(profile_path)
-        log(f"Loaded layout profile '{pipeline_profile}' from {profile_path}", log_file)
     except Exception as e:
         tb = traceback.format_exc()
-        error_dialog(f"Failed to load layout profile '{pipeline_profile}': {e}")
-        log(f"Layout profile load error: {tb}", log_file)
-        return
+        print(f"Requested layout profile '{pipeline_profile}' failed to load from {profile_path}: {e}")
+        if pipeline_profile != "sop_default":
+            # Fallback to default SOP layout profile
+            pipeline_profile = "sop_default"
+            profile_filename = f"layout_profile_{pipeline_profile}.json"
+            profile_path = os.path.join(profile_dir, profile_filename)
+            try:
+                layout_profile = load_layout_profile(profile_path)
+            except Exception as e2:
+                tb2 = traceback.format_exc()
+                error_dialog(f"Failed to load fallback layout profile 'sop_default': {e2}")
+                print(tb2)
+                return
+        else:
+            error_dialog(f"Failed to load layout profile '{pipeline_profile}': {e}")
+            print(tb)
+            return
 
+    # Resolve normalized document state (active/draft/retired) from metadata + profile rules
+    doc_state = resolve_document_state(meta, layout_profile)
+
+    # Configure logging based on layout_profile.logging and document state
+    logging_cfg = layout_profile.get("logging") or {}
+    logging_enabled = logging_cfg.get("enabled", False)
+    logging_only_active = logging_cfg.get("only_when_active", False)
+
+    log_file = None
+    external_log_path = None
+
+    if logging_enabled and (not logging_only_active or doc_state == "active"):
+        internal_cfg = logging_cfg.get("internal") or {}
+        internal_enabled = internal_cfg.get("enabled", False)
+        if internal_enabled:
+            internal_dir = internal_cfg.get("directory", "logs")
+            logs_dir = os.path.join(base_dir, internal_dir)
+            os.makedirs(logs_dir, exist_ok=True)
+            internal_pattern = internal_cfg.get("pattern", "{document_id}_pipeline.log")
+            log_filename = safe_format(internal_pattern, meta) or "pipeline.log"
+            log_file = os.path.join(logs_dir, log_filename)
+
+        external_cfg = logging_cfg.get("external") or {}
+        external_enabled = external_cfg.get("enabled", False)
+        external_only_active = external_cfg.get("only_when_active", False)
+        if external_enabled and (not external_only_active or doc_state == "active"):
+            ext_dir = external_cfg.get("directory", "releases/{family}/_logs")
+            # family defaults to document_category if not explicitly provided
+            if "family" not in meta:
+                meta["family"] = layout_profile.get("document_category") or "SOP"
+            ext_dir_resolved = safe_format(ext_dir, meta)
+            external_dir = os.path.join(base_dir, ext_dir_resolved)
+            os.makedirs(external_dir, exist_ok=True)
+            ext_pattern = external_cfg.get("pattern", "{document_id}_r{revision}_{pipeline_profile}_{timestamp_utc}.log")
+            # Add a basic UTC timestamp token if not present in meta yet
+            if "timestamp_utc" not in meta:
+                meta["timestamp_utc"] = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H-%M-%SZ")
+            external_log_filename = safe_format(ext_pattern, meta) or "external.log"
+            external_log_path = os.path.join(external_dir, external_log_filename)
+
+    # At this point, log_file may be None (logging disabled or inactive-doc policy)
+    log("Starting advanced pipeline run (layout-profile driven).", log_file)
+
+    # Load DocBook blocks
     # Load DocBook blocks
     try:
         root = load_docbook(docbook_path)
         blocks = build_blocks(root)
+        log(f"DocBook parsing produced {len(blocks)} content blocks.", log_file)
+        if not blocks:
+            error_dialog("DocBook was parsed but produced no blocks. Check the DocBook structure and styles_map.")
     except Exception as e:
         tb = traceback.format_exc()
         error_dialog(f"Failed to parse DocBook: {e}")
@@ -577,29 +822,64 @@ def main():
         log(f"Overflow handling error: {tb}", log_file)
         return
 
-    # Determine PDF filename from layout_profile.output_naming (if present)
-    output_naming = layout_profile.get("output_naming", {})
-    pdf_pattern = output_naming.get("pdf_pattern") or "{document_id}_r{revision}.pdf"
+    # Determine PDF output configuration from layout_profile.outputs (preferred)
+    outputs_cfg = layout_profile.get("outputs") or {}
+    pdf_cfg = outputs_cfg.get("pdf") or {}
+
+    # Determine directory for PDF output
+    pdf_target_dir = pdf_cfg.get("target_directory")
+    if not pdf_target_dir:
+        # Fallback to legacy resources.pdf_directory or default published/pdf
+        resources_cfg = layout_profile.get("resources") or {}
+        pdf_target_dir = resources_cfg.get("pdf_directory") or os.path.join("published", "pdf")
+
+    pdf_dir = os.path.join(base_dir, pdf_target_dir) if not os.path.isabs(pdf_target_dir) else pdf_target_dir
+    os.makedirs(pdf_dir, exist_ok=True)
+
+    # Determine PDF filename pattern
+    pdf_pattern = pdf_cfg.get("filename_pattern")
+    if not pdf_pattern:
+        # Fallback to legacy output_naming.pdf_pattern or a safe default
+        output_naming = layout_profile.get("output_naming", {})
+        pdf_pattern = output_naming.get("pdf_pattern") or "{document_id}_r{revision}.pdf"
+
     pdf_name = safe_format(pdf_pattern, meta) or "output.pdf"
     output_pdf = os.path.join(pdf_dir, pdf_name)
 
-    # Export PDF
-    try:
-        pdf = scribus.PDFfile()
-        pdf.file = output_pdf
-        pdf.save()
-        log(f"PDF exported to {output_pdf}", log_file)
-    except Exception as e:
-        tb = traceback.format_exc()
-        error_dialog(f"Failed to export PDF: {e}")
-        log(f"PDF export error: {tb}", log_file)
+    # Decide whether PDF should be emitted based on output mode and document state
+    pdf_mode = pdf_cfg.get("mode", "DISABLED")
+    if not should_emit_output(pdf_mode, doc_state):
+        log(f"PDF output suppressed (mode='{pdf_mode}', doc_state='{doc_state}').", log_file)
+        output_pdf = None
+    else:
+        # Export PDF
+        try:
+            pdf = scribus.PDFfile()
+            pdf.file = output_pdf
+            pdf.save()
+            log(f"PDF exported to {output_pdf}", log_file)
+        except Exception as e:
+            tb = traceback.format_exc()
+            error_dialog(f"Failed to export PDF: {e}")
+            log(f"PDF export error: {tb}", log_file)
+
+    # If external logging is enabled, copy internal log file to the configured external path
+    if log_file and external_log_path:
+        try:
+            import shutil
+            shutil.copyfile(log_file, external_log_path)
+            log(f"External log written to {external_log_path}", log_file)
+        except Exception as e:
+            tb = traceback.format_exc()
+            print(f"Failed to write external log: {e}")
+            log(f"External log copy error: {tb}", log_file)
 
     log("Advanced layout‑profile pipeline run completed.", log_file)
     scribus.messageBox(
         "Pipeline",
         "Advanced layout‑profile pipeline run completed.",
         scribus.ICON_NONE,
-        scribus.BUTTON_OK
+       scribus.BUTTON_OK
     )
 
 
