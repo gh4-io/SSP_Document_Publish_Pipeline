@@ -1,0 +1,99 @@
+sop_to_layout_map:
+  pages:
+
+    # ─────────────────────────────
+    # PAGE 1
+    # ─────────────────────────────
+    - page: 1
+      roles:
+
+        title:
+          # Main title on page 1
+          frame: "TitleMP"
+          value: "{title}"
+
+        body:
+          # Main SOP content starting area
+          frame: "BodyTextMP"
+
+        meta:
+          # One-value-per-frame mappings
+          fields:
+            document_id:
+              frame: "DocIdMP"
+              value: "{document_id}"
+
+            revision:
+              frame: "RevMP"
+              value: "{revision}"
+
+            effective_date:
+              frame: "EffDateMP"
+              value: "{effective_date}"
+
+            status:
+              frame: "StatusMP"
+              value: "{status}"
+
+            owner:
+              frame: "OwnerMP"
+              value: "{owner}"
+
+            approver:
+              frame: "ApproverMP"
+              value: "{approver}"
+
+            department:
+              frame: "DepartmentMP"
+              value: "{department}"
+
+            amos_version:
+              frame: "AMOSVersonMP"
+              value: "{amos_version}"
+
+            apn:
+              frame: "APNMP"
+              value: "{apn}"
+
+            upstream_apn:
+              # Script should provide 'upstream_apn_joined' from list
+              frame: "upstream_apn"
+              value: "{upstream_apn_joined}"
+
+            downstream_apn:
+              # Script should provide 'downstream_apn_joined' from list
+              frame: "downstream_apn"
+              value: "{downstream_apn_joined}"
+
+    # ─────────────────────────────
+    # PAGE 2 (CONTINUATION PAGE)
+    # ─────────────────────────────
+    - page: 2
+      roles:
+
+        title:
+          # Repeated title on continuation pages
+          frame: "TitleCONT"
+          value: "{title}"
+
+        body:
+          # Continuation of main body flow
+          frame: "BodyTextCONT"
+
+        meta:
+          fields:
+            document_id:
+              frame: "DocIdCONT"
+              value: "{document_id}"
+
+            revision:
+              frame: "RevCONT"
+              value: "{revision}"
+
+            effective_date:
+              frame: "EffDateCONT"
+              value: "{effective_date}"
+
+            status:
+              frame: "StatusCONT"
+              value: "{status}"

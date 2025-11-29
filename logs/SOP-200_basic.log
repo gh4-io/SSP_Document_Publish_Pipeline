@@ -1,0 +1,62 @@
+[2025-11-28T17:52:11.926226] Starting basic SOP-200 pipeline run.
+[2025-11-28T17:52:11.927754] Missing paragraph style: BodyText
+[2025-11-28T17:52:11.929292] Missing paragraph style: Heading1
+[2025-11-28T17:52:11.931435] Missing paragraph style: Heading2
+[2025-11-28T17:57:53.136239] Starting basic SOP-200 pipeline run.
+[2025-11-28T17:57:53.139742] No pages defined in sop_to_layout_map.
+[2025-11-28T17:58:16.371303] No body frame mapping for page 1.
+[2025-11-28T18:02:14.963315] Starting basic SOP-200 pipeline run.
+[2025-11-28T18:02:14.970607] Set title in frame TitleMP: 
+[2025-11-28T18:02:14.974442] Set meta document_id in frame DocIdMP: SOP-200
+[2025-11-28T18:02:14.976903] Set meta effective_date in frame EffDateMP: None
+[2025-11-28T18:02:14.979466] Set meta status in frame StatusMP: Draft
+[2025-11-28T18:02:14.980631] Set meta owner in frame OwnerMP: Jason Grace
+[2025-11-28T18:02:14.984023] Set meta approver in frame ApproverMP: None
+[2025-11-28T18:02:14.986549] Set meta department in frame DepartmentMP: Planning
+[2025-11-28T18:02:14.988638] Set meta amos_version in frame AMOSVersonMP: 25.6
+[2025-11-28T18:02:14.990641] Set meta apn in frame APNMP: 2201
+[2025-11-28T18:02:14.991642] Set title in frame TitleCONT: 
+[2025-11-28T18:02:14.994211] Set meta document_id in frame DocIdCONT: SOP-200
+[2025-11-28T18:02:14.996220] Set meta effective_date in frame EffDateCONT: None
+[2025-11-28T18:02:14.998723] Set meta status in frame StatusCONT: Draft
+[2025-11-28T18:02:15.008125] Body text flowed into frame BodyTextMP.
+[2025-11-28T18:02:15.116454] PDF exported to C:\Users\Jason\Documents\OVault\OVault\WORK\New AMOS\Document_Publish_Pipeline\published\pdf\SOP-200_basic.pdf
+[2025-11-28T18:02:15.118970] Basic SOP-200 pipeline run completed.
+[2025-11-28T19:08:56.657837] Starting basic SOP-200 pipeline run.
+[2025-11-28T19:08:56.663958] Set title in frame TitleMP: 
+[2025-11-28T19:08:56.665961] Set meta document_id in frame DocIdMP: SOP-200
+[2025-11-28T19:08:56.668962] Set meta revision in frame RevMP: 0
+[2025-11-28T19:08:56.670962] Set meta effective_date in frame EffDateMP: None
+[2025-11-28T19:08:56.671973] Set meta status in frame StatusMP: Draft
+[2025-11-28T19:08:56.673955] Set meta owner in frame OwnerMP: Jason Grace
+[2025-11-28T19:08:56.676477] Set meta approver in frame ApproverMP: None
+[2025-11-28T19:08:56.678044] Set meta department in frame DepartmentMP: Planning
+[2025-11-28T19:08:56.680050] Set meta amos_version in frame AMOSVersonMP: 25.6
+[2025-11-28T19:08:56.682052] Set meta apn in frame APNMP: 2201
+[2025-11-28T19:08:56.684559] Set title in frame TitleCONT: 
+[2025-11-28T19:08:56.686563] Set meta document_id in frame DocIdCONT: SOP-200
+[2025-11-28T19:08:56.688565] Set meta revision in frame RevCONT: 0
+[2025-11-28T19:08:56.691565] Set meta effective_date in frame EffDateCONT: None
+[2025-11-28T19:08:56.693570] Set meta status in frame StatusCONT: Draft
+[2025-11-28T19:08:56.782500] Body text flowed into frame BodyTextMP.
+[2025-11-28T19:08:56.909455] PDF exported to C:\Users\Jason\Documents\OVault\OVault\WORK\New AMOS\Document_Publish_Pipeline\published\pdf\SOP-200_basic.pdf
+[2025-11-28T19:08:56.911527] Basic SOP-200 pipeline run completed.
+[2025-11-28T19:12:07.861041] Starting basic SOP-200 pipeline run.
+[2025-11-28T19:12:07.870150] Set title in frame TitleMP: Create Workackage Sequencing Type
+[2025-11-28T19:12:07.872655] Set meta document_id in frame DocIdMP: SOP-200
+[2025-11-28T19:12:07.874169] Set meta revision in frame RevMP: 0
+[2025-11-28T19:12:07.876174] Set meta effective_date in frame EffDateMP: None
+[2025-11-28T19:12:07.878694] Set meta status in frame StatusMP: Draft
+[2025-11-28T19:12:07.879712] Set meta owner in frame OwnerMP: Jason Grace
+[2025-11-28T19:12:07.881712] Set meta approver in frame ApproverMP: None
+[2025-11-28T19:12:07.882699] Set meta department in frame DepartmentMP: Planning
+[2025-11-28T19:12:07.885344] Set meta amos_version in frame AMOSVersonMP: 25.6
+[2025-11-28T19:12:07.886363] Set meta apn in frame APNMP: 2201
+[2025-11-28T19:12:07.888912] Set title in frame TitleCONT: Create Workackage Sequencing Type
+[2025-11-28T19:12:07.891919] Set meta document_id in frame DocIdCONT: SOP-200
+[2025-11-28T19:12:07.894451] Set meta revision in frame RevCONT: 0
+[2025-11-28T19:12:07.897455] Set meta effective_date in frame EffDateCONT: None
+[2025-11-28T19:12:07.899454] Set meta status in frame StatusCONT: Draft
+[2025-11-28T19:12:08.056457] Body text flowed into frame BodyTextMP.
+[2025-11-28T19:12:08.182804] PDF exported to C:\Users\Jason\Documents\OVault\OVault\WORK\New AMOS\Document_Publish_Pipeline\published\pdf\SOP-200_basic.pdf
+[2025-11-28T19:12:08.186049] Basic SOP-200 pipeline run completed.

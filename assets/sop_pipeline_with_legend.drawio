@@ -1,0 +1,101 @@
+<mxfile host="65bd71144e">
+    <diagram id="sop-pipeline" name="SOP Pipeline">
+        <mxGraphModel dx="4286" dy="1139" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="A" value="Author SOP in Markdown&#xa;/drafts/*.md" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="80" width="210" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="B" value="Convert Markdown to DocBook XML&#xa;(Pandoc)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="80" width="230" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="C" value="DocBook XML&#xa;/drafts/*.xml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="630" y="80" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="T1" value="Scribus .sla Template&#xa;MP_FIRST / MP_CONT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="210" width="230" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="T2" value="Export Layout YAML&#xa;layout_all_pages.yaml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="345" y="210" width="220" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="D" value="DocBook to Scribus Automation&#xa;(Python inside Scribus)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="595" y="210" width="270" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="E" value="Multi-page SOP Layout&#xa;(page numbers, headers, footers)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="595" y="340" width="270" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="F" value="Export PDF&#xa;/published/pdf/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="625" y="470" width="210" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="G" value="HTML / Web Conversion&#xa;DocBook to HTML (Pandoc)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="75" width="230" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="H" value="Web Output&#xa;/published/web/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="985" y="210" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="R" value="Release Packaging&#xa;/releases/SOP | STD | REF | APP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="600" width="270" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend" value="Legend" style="shape=swimlane;rounded=1;html=1;horizontal=0;childLayout=stackLayout;horizontalStack=0;resizeParent=1;collapsible=0;fontStyle=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="460" width="260" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg1" value="Authoring / Input (Markdown)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=0;" parent="legend" vertex="1">
+                    <mxGeometry x="40" width="220" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg2" value="Conversion (Pandoc / XML)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=0;" parent="legend" vertex="1">
+                    <mxGeometry x="40" y="25" width="220" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg3" value="Layout &amp; Template (Scribus)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=0;" parent="legend" vertex="1">
+                    <mxGeometry x="40" y="50" width="220" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg4" value="Automation / Python Scripts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=0;" parent="legend" vertex="1">
+                    <mxGeometry x="40" y="75" width="220" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg5" value="Final Outputs (PDF / Web)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=0;" parent="legend" vertex="1">
+                    <mxGeometry x="40" y="100" width="220" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="eA_B" style="endArrow=block;rounded=0;html=1;" parent="1" source="A" target="B" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eB_C" style="endArrow=block;rounded=0;html=1;" parent="1" source="B" target="C" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eT1_T2" style="endArrow=block;rounded=0;html=1;" parent="1" source="T1" target="T2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eC_D" style="endArrow=block;rounded=0;html=1;" parent="1" source="C" target="D" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eT2_D" style="endArrow=block;rounded=0;html=1;" parent="1" source="T2" target="D" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eD_E" style="endArrow=block;rounded=0;html=1;" parent="1" source="D" target="E" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eE_F" style="endArrow=block;rounded=0;html=1;" parent="1" source="E" target="F" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eC_G" style="endArrow=block;rounded=0;html=1;" parent="1" source="C" target="G" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eG_H" style="endArrow=block;rounded=0;html=1;" parent="1" source="G" target="H" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eF_R" style="endArrow=block;rounded=0;html=1;" parent="1" source="F" target="R" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1085" y="505"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="eH_R" style="endArrow=block;rounded=0;html=1;" parent="1" source="H" target="R" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="eC_R" style="endArrow=block;rounded=0;html=1;dashed=1;" parent="1" source="C" target="R" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
