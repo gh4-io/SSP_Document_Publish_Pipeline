@@ -1,0 +1,99 @@
+{
+  "layout_profile": {
+    "id": "profile_id_here",
+    "label": "Human-Readable Layout Profile Name",
+    "version": "1.0.0",
+    "document_category": "SOP",
+    "description": "Short description of what this layout profile is for.",
+
+    "resources": {
+      "scribus_template": "templates/REPLACE_ME.sla",
+      "docbook": {
+        "stylesheet": "styles/REPLACE_ME.xsl",
+        "namespace": "http://docbook.org/ns/docbook"
+      },
+      "pdf_directory": "published/pdf",
+      "web_directory": "published/web"
+    },
+
+    "styles_map": {
+      "docbook": {
+        "heading": {
+          "1": "Heading1",
+          "2": "Heading2"
+        },
+        "paragraph": "BodyText"
+      }
+    },
+
+    "output_naming": {
+      "pdf_pattern": "{document_id}_r{revision}.pdf",
+      "html_pattern": "{document_id}_r{revision}.html",
+      "release_bundle_pattern": "{document_id}_r{revision}_{timestamp_utc}.zip"
+    },
+
+    "logging": {
+      "internal_directory": "logs",
+      "internal_log_pattern": "{document_id}_pipeline.log",
+      "external_directory": "releases/{family}/_logs",
+      "external_log_pattern": "{document_id}_r{revision}_{pipeline_profile}_{timestamp_utc}.log"
+    },
+
+    "scribus": {
+      "masters": {
+        "first_page": "MP_FIRST",
+        "continuation_pages": "MP_CONT"
+      },
+      "required_styles": [
+        "BodyText",
+        "Heading1",
+        "Heading2"
+      ]
+    },
+
+    "layout": {
+      "pages": [
+        {
+          "page": 1,
+          "frames": [
+            {
+              "name": "TitleMain",
+              "type": "TextFrame",
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.0,
+              "height": 0.0,
+              "role": "title",
+              "font": null,
+              "fontsize": null,
+              "value": "{title}"
+            },
+            {
+              "name": "BodyMain",
+              "type": "TextFrame",
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.0,
+              "height": 0.0,
+              "role": "body"
+            }
+          ]
+        },
+        {
+          "page": 2,
+          "frames": [
+            {
+              "name": "BodyContinuation",
+              "type": "TextFrame",
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.0,
+              "height": 0.0,
+              "role": "body"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

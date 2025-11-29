@@ -14,7 +14,7 @@ downstream-apn:
   - "58"
 upstream-apn:
 department: Planning
-pipeline_profile: dts_master-report
+pipeline_profile: dts_master_report
 revision: 0
 ---
 

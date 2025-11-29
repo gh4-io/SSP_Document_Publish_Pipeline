@@ -1,0 +1,327 @@
+{
+  "layout_profile": {
+    "id": "sop_default",
+    "label": "SOP Default Layout Profile",
+    "version": "1.1.0",
+    "document_category": "SOP",
+    "description": "Layout, resources, style mapping, and frame semantics for SOP documents rendered via Scribus.",
+    "resources": {
+      "scribus_template": "templates/layouts/DTS_Master_Report_Template.sla",
+      "docbook": {
+        "stylesheet": "styles/docbook-sop.xsl",
+        "namespace": "http://docbook.org/ns/docbook"
+      },
+      "pdf_directory": "published/pdf",
+      "web_directory": "published/web"
+    },
+    "styles_map": {
+      "docbook": {
+        "heading": {
+          "1": "Heading1",
+          "2": "Heading2",
+          "3": "Heading3",
+          "4": "Heading4",
+          "5": "Heading5",
+          "6": "Heading6"
+        },
+        "paragraph": "BodyText"
+      }
+    },
+    "outputs": {
+      "pdf": {
+        "mode": "ACTIVE_ONLY",
+        "filename_pattern": "{document_id}_r{revision}.pdf",
+        "target_directory": "published/pdf"
+      },
+      "web": {
+        "mode": "DISABLED",
+        "filename_pattern": "{document_id}_r{revision}.html",
+        "target_directory": "published/web"
+      },
+      "release_bundle": {
+        "mode": "DISABLED",
+        "filename_pattern": "{document_id}_r{revision}_{timestamp_utc}.zip",
+        "target_directory": "releases/{family}"
+      }
+    },
+    "logging": {
+      "enabled": true, 
+      "level": "DEBUG", 
+      "only_when_active": false, 
+
+      "internal": {
+        "enabled": true,
+        "directory": "logs",
+        "pattern": "{document_id}_pipeline.log"
+      },
+      "external": {
+        "enabled": false,
+        "only_when_active": true, 
+        "directory": "releases/{family}/_logs",
+        "pattern": "{document_id}_r{revision}_{pipeline_profile}_{timestamp_utc}.log"
+      }
+    },
+    "scribus": {
+      "masters": {
+        "first_page": "MP_FIRST",
+        "continuation_pages": "MP_CONT"
+      },
+      "required_styles": ["BodyText", "Heading1", "Heading2"]
+    },
+    "layout": {
+      "pages": [
+        {
+          "page": 1,
+          "frames": [
+            {
+              "name": "DownstreamApnMain",
+              "type": "TextFrame",
+              "x": 6.0223,
+              "y": 1.7639,
+              "width": 1.9498,
+              "height": 0.3291,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "downstream_apn",
+              "value": "{downstream_apn_joined}"
+            },
+            {
+              "name": "UpstreamApnMain",
+              "type": "TextFrame",
+              "x": 4.0725,
+              "y": 1.7639,
+              "width": 1.9498,
+              "height": 0.3291,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "upstream_apn",
+              "value": "{upstream_apn_joined}"
+            },
+            {
+              "name": "ApnMain",
+              "type": "TextFrame",
+              "x": 2.1227,
+              "y": 1.7639,
+              "width": 1.9499,
+              "height": 0.3291,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "apn",
+              "value": "{apn}"
+            },
+            {
+              "name": "StatusMain",
+              "type": "TextFrame",
+              "x": 6.7583,
+              "y": 10.15,
+              "width": 1.15,
+              "height": 0.1833,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "status",
+              "value": "{status}"
+            },
+            {
+              "name": "ApproverMain",
+              "type": "TextFrame",
+              "x": 5.4884,
+              "y": 1.4139,
+              "width": 2.46,
+              "height": 0.3292,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "approver",
+              "value": "{approver}"
+            },
+            {
+              "name": "DepartmentMain",
+              "type": "TextFrame",
+              "x": 0.5,
+              "y": 1.4139,
+              "width": 2.5115,
+              "height": 0.3292,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "department",
+              "value": "{department}"
+            },
+            {
+              "name": "OwnerMain",
+              "type": "TextFrame",
+              "x": 3.0115,
+              "y": 1.4139,
+              "width": 2.46,
+              "height": 0.3292,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "owner",
+              "value": "{owner}"
+            },
+            {
+              "name": "AmosVersionMain",
+              "type": "TextFrame",
+              "x": 0.5,
+              "y": 1.7639,
+              "width": 1.6227,
+              "height": 0.3291,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "amos_version",
+              "value": "{amos_version}"
+            },
+            {
+              "name": "TitleMain",
+              "type": "TextFrame",
+              "x": 2.0669,
+              "y": 0.5,
+              "width": 4.5997,
+              "height": 0.8722,
+              "font": "Trebuchet MS Regular",
+              "fontsize": 22.0,
+              "role": "title",
+              "value": "{title}"
+            },
+            {
+              "name": "BodyMain",
+              "type": "TextFrame",
+              "x": 0.5,
+              "y": 2.1137,
+              "width": 7.4721,
+              "height": 7.8919,
+              "font": null,
+              "fontsize": null,
+              "role": "body"
+            },
+            {
+              "name": "DocIdMain",
+              "type": "TextFrame",
+              "x": 6.6843,
+              "y": 0.5431,
+              "width": 1.2747,
+              "height": 0.2708,
+              "font": null,
+              "fontsize": null,
+              "role": "meta",
+              "meta_key": "document_id",
+              "value": "{document_id}"
+            },
+            {
+              "name": "RevisionMain",
+              "type": "TextFrame",
+              "x": 6.6843,
+              "y": 0.8278,
+              "width": 1.2747,
+              "height": 0.2708,
+              "font": null,
+              "fontsize": null,
+              "role": "meta",
+              "meta_key": "revision",
+              "value": "{revision}"
+            },
+            {
+              "name": "EffectiveDateMain",
+              "type": "TextFrame",
+              "x": 6.6843,
+              "y": 1.0973,
+              "width": 1.2747,
+              "height": 0.2708,
+              "font": null,
+              "fontsize": null,
+              "role": "meta",
+              "meta_key": "effective_date",
+              "value": "{effective_date}"
+            }
+          ]
+        },
+        {
+          "page": 2,
+          "frames": [
+            {
+              "name": "BodyContinuation",
+              "type": "TextFrame",
+              "x": 0.5,
+              "y": 1.3936,
+              "width": 7.4721,
+              "height": 8.612,
+              "font": null,
+              "fontsize": null,
+              "role": "body"
+            },
+            {
+              "name": "TitleContinuation",
+              "type": "TextFrame",
+              "x": 2.0669,
+              "y": 0.5,
+              "width": 4.5997,
+              "height": 0.8722,
+              "font": "Trebuchet MS Regular",
+              "fontsize": 22.0,
+              "role": "title",
+              "value": "{title}"
+            },
+            {
+              "name": "DocIdContinuation",
+              "type": "TextFrame",
+              "x": 6.6843,
+              "y": 0.5431,
+              "width": 1.2747,
+              "height": 0.2708,
+              "font": null,
+              "fontsize": null,
+              "role": "meta",
+              "meta_key": "document_id",
+              "value": "{document_id}"
+            },
+            {
+              "name": "RevisionContinuation",
+              "type": "TextFrame",
+              "x": 6.6843,
+              "y": 0.8278,
+              "width": 1.2747,
+              "height": 0.2708,
+              "font": null,
+              "fontsize": null,
+              "role": "meta",
+              "meta_key": "revision",
+              "value": "{revision}"
+            },
+            {
+              "name": "EffectiveDateContinuation",
+              "type": "TextFrame",
+              "x": 6.6843,
+              "y": 1.0973,
+              "width": 1.2747,
+              "height": 0.2708,
+              "font": null,
+              "fontsize": null,
+              "role": "meta",
+              "meta_key": "effective_date",
+              "value": "{effective_date}"
+            },
+            {
+              "name": "StatusContinuation",
+              "type": "TextFrame",
+              "x": 6.7583,
+              "y": 10.15,
+              "width": 1.15,
+              "height": 0.1833,
+              "font": "Arial Regular",
+              "fontsize": 11.0,
+              "role": "meta",
+              "meta_key": "status",
+              "value": "{status}"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

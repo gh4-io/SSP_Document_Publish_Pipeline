@@ -2,7 +2,7 @@ layout:
   pages:
     - page: 1
       frames:
-      - name: 'DAPNMP'
+      - name: 'DownstreamApnMain'
         type: 'TextFrame'
         x: 6.0223
         y: 1.7639
@@ -10,7 +10,7 @@ layout:
         height: 0.3291
         font: 'Arial Regular'
         fontsize: 11.00
-      - name: 'UAPNMP'
+      - name: 'UpstreamApnMain'
         type: 'TextFrame'
         x: 4.0725
         y: 1.7639
@@ -18,7 +18,7 @@ layout:
         height: 0.3291
         font: 'Arial Regular'
         fontsize: 11.00
-      - name: 'APNMP'
+      - name: 'ApnMain'
         type: 'TextFrame'
         x: 2.1227
         y: 1.7639
@@ -26,7 +26,7 @@ layout:
         height: 0.3291
         font: 'Arial Regular'
         fontsize: 11.00
-      - name: 'StatusMP'
+      - name: 'StatusMain'
         type: 'TextFrame'
         x: 6.7583
         y: 10.1500
@@ -34,7 +34,7 @@ layout:
         height: 0.1833
         font: 'Arial Regular'
         fontsize: 11.00
-      - name: 'ApproverMP'
+      - name: 'ApproverMain'
         type: 'TextFrame'
         x: 5.4884
         y: 1.4139
@@ -42,7 +42,7 @@ layout:
         height: 0.3292
         font: 'Arial Regular'
         fontsize: 11.00
-      - name: 'DepartmentMP'
+      - name: 'DepartmentMain'
         type: 'TextFrame'
         x: 0.5000
         y: 1.4139
@@ -50,7 +50,7 @@ layout:
         height: 0.3292
         font: 'Arial Regular'
         fontsize: 11.00
-      - name: 'OwnerMP'
+      - name: 'OwnerMain'
         type: 'TextFrame'
         x: 3.0115
         y: 1.4139
@@ -58,7 +58,7 @@ layout:
         height: 0.3292
         font: 'Arial Regular'
         fontsize: 11.00
-      - name: 'AMOSVersonMP'
+      - name: 'AmosVersionMain'
         type: 'TextFrame'
         x: 0.5000
         y: 1.7639
@@ -66,7 +66,7 @@ layout:
         height: 0.3291
         font: 'Arial Regular'
         fontsize: 11.00
-      - name: 'TitleMP'
+      - name: 'TitleMain'
         type: 'TextFrame'
         x: 2.0669
         y: 0.5000
@@ -74,7 +74,7 @@ layout:
         height: 0.8722
         font: 'Trebuchet MS Regular'
         fontsize: 22.00
-      - name: 'BodyTextMP'
+      - name: 'BodyMain'
         type: 'TextFrame'
         x: 0.5000
         y: 2.1137
@@ -82,7 +82,7 @@ layout:
         height: 7.8919
         font: null
         fontsize: null
-      - name: 'DocIdMP'
+      - name: 'DocIdMain'
         type: 'TextFrame'
         x: 6.6843
         y: 0.5431
@@ -90,7 +90,7 @@ layout:
         height: 0.2708
         font: null
         fontsize: null
-      - name: 'RevMP'
+      - name: 'RevisionMain'
         type: 'TextFrame'
         x: 6.6843
         y: 0.8278
@@ -98,7 +98,7 @@ layout:
         height: 0.2708
         font: null
         fontsize: null
-      - name: 'EffDateMP'
+      - name: 'EffectiveDateMain'
         type: 'TextFrame'
         x: 6.6843
         y: 1.0973
@@ -108,7 +108,7 @@ layout:
         fontsize: null
     - page: 2
       frames:
-      - name: 'BodyTextCONT'
+      - name: 'BodyContinuation'
         type: 'TextFrame'
         x: 0.5000
         y: 1.3936
@@ -116,7 +116,7 @@ layout:
         height: 8.6120
         font: null
         fontsize: null
-      - name: 'TitleCONT'
+      - name: 'TitleContinuation'
         type: 'TextFrame'
         x: 2.0669
         y: 0.5000
@@ -124,7 +124,7 @@ layout:
         height: 0.8722
         font: 'Trebuchet MS Regular'
         fontsize: 22.00
-      - name: 'DocIdCONT'
+      - name: 'DocIdContinuation'
         type: 'TextFrame'
         x: 6.6843
         y: 0.5431
@@ -132,7 +132,7 @@ layout:
         height: 0.2708
         font: null
         fontsize: null
-      - name: 'RevCONT'
+      - name: 'RevisionContinuation'
         type: 'TextFrame'
         x: 6.6843
         y: 0.8278
@@ -140,7 +140,7 @@ layout:
         height: 0.2708
         font: null
         fontsize: null
-      - name: 'EffDateCONT'
+      - name: 'EffectiveDateContinuation'
         type: 'TextFrame'
         x: 6.6843
         y: 1.0973
@@ -148,7 +148,7 @@ layout:
         height: 0.2708
         font: null
         fontsize: null
-      - name: 'StatusCONT'
+      - name: 'StatusContinuation'
         type: 'TextFrame'
         x: 6.7583
         y: 10.1500
