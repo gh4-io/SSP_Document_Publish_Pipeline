@@ -509,3 +509,10 @@ mprofile_*.dat
 NOTES.md
 TODO.md
 SCRATCH.md
+
+# Tool caches
+.ruff_cache/
+
+# Local AI assistant/config directories
+.claude/
+.serena/

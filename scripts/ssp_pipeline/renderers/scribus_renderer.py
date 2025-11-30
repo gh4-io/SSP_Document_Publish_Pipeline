@@ -1,0 +1,1 @@
+﻿# Scribus renderer (legacy)

@@ -1,0 +1,14 @@
+[project]
+name = "ssp_document_publish_pipeline"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "Document publishing pipeline for SOP/STD/REF/APP docs"
+authors = [{ name = "Jason Grace" }]
+
+[tool.uv]
+dev-dependencies = [
+    "ruff",
+    "pytest",
+    "weasyprint",
+    "pandoc",
+]
