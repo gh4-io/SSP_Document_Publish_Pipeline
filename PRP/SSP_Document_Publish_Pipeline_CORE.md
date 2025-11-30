@@ -128,6 +128,11 @@ Key rules:
 - Images (`![[Screenshot.png]]`) auto-resolved from `assets/images/...`  
 - Tables / lists / code blocks rendered with GitHub Markdown theme  
 
+### 6.1 Authoring Recommendations
+- **Editor:** Obsidian (Live Preview mode recommended).
+- **Compatibility:** The pipeline natively supports Obsidian-flavored syntax (Callouts, Wikilinks, Image embedding).
+- **Validation:** Authors should use the "Watch Mode" (see Section 10) to verify layout compliance, as the editor view is for content structure only, not final print layout.
+
 ---
 
 ## 7. Scribus Guidelines (Design Only)
@@ -174,6 +179,10 @@ pandoc drafts/SOP-200.md -t json -o assets/xml/metadata/SOP-200.json
 
 # Run pipeline
 uv run python scripts/ssp_pipeline/pipeline.py drafts/SOP-200.md
+
+# Interactive Authoring (Watch Mode)
+# Monitors drafts/ for changes and auto-rebuilds HTML/PDF
+uv run python scripts/ssp_pipeline/watch.py drafts/SOP-200.md
 ```
 
 Result:  

@@ -63,6 +63,17 @@ workflow per task:
    - how to run it
    - open questions (very short)
 
+file editing safety policy:
+- MANDATORY: Read file before EVERY Edit operation (even if read earlier in session)
+- LIMIT: No more than 2 consecutive Edit calls on same file without re-reading
+- BATCH: For multiple changes to same section, use single Edit with larger old_string/new_string
+- VERIFY: After Edit, use Bash (head/tail) to confirm change applied correctly
+- RECOVERY: If Edit fails with ENOENT:
+  1. Use Bash to verify file exists
+  2. Re-read file to refresh state
+  3. Check if change already applied before retrying
+- FALLBACK: For complete file rewrites (>50% changed), use Write instead of Edit
+
 self-update policy:
 - claude code and approved agents may update PRP and core docs when:
   - a new phase begins (scaffolding, implementation, integration)
@@ -185,3 +196,6 @@ project state policy:
 - If the user requests work that contradicts the Roadmap:
   - Warning: "This deviates from the Phase <X> plan."
   - Ask: "Should we update the Decision Log and Proceed?"
+
+# PRP Changelog
+- 2025-11-30: Added "file editing safety policy" — prevents ENOENT errors by mandating Read before Edit, limiting consecutive edits, and providing recovery protocol.

@@ -120,3 +120,89 @@ Act as the SSP Project Manager.
 | **Run Tests** | `uv run pytest` |
 | **Lint Check** | `uv run ruff check .` |
 | **Formatting** | `uv run ruff format .` |
+
+
+## Phase Sample
+
+```markdown
+Here is the complete compound prompt. It instructs Claude to first backfill the missing milestone documentation for Phase 4, and then proceed immediately to executing Phase 5 with the same rigorous standard.
+
+  We have code for **Phase 4 (Utilities)** complete, but we need to generate its milestone documentation before moving on. Please execute the following multi-step plan in order.
+
+  ### STEP 1: Phase 4 Milestone Documentation (Retroactive)
+  1. **Analyze Phase 4 Code:** Review the existing utility scripts to understand how to verify they are working.
+  2. **Create Documentation:** Generate the file `documentation/milestones/P04_Utilities_Core.md`.
+  3. **Content Requirements:**
+     - **Context:** Briefly describe what utilities were created.
+     - **"Fresh Terminal" Testing Instructions:**
+       - How to set up the venv and install requirements.
+       - **Verification Script:** Provide a specific Python snippet (using `python -c` or a temporary script) that imports a utility function (like the logger or path validator) and runs it.
+       - **Expected Output:** Show exactly what the success message looks like in the terminal.
+
+  ### STEP 2: Holistic Analysis for Next Phase
+  1. **Analyze Phase 4 vs Phase 5:** Review the current utilities again to ensure they are sufficient to support the parsing logic required in Phase 5. If minor adjustments to utilities are needed to support the parser, identify them
+  now.
+
+  ### STEP 3: Implement Phase 5 (Parsers)
+  **Target File:** `scripts/ssp_pipeline/parsers/pandoc_ast.py`
+
+  **Goal:** Parse Pandoc JSON AST into the internal block model described in `SSP_Document_Publish_Pipeline_CORE.md`.
+
+  **Process:**
+  1. **Plan:**  to understand the target model. Provide a short plan (5 bullets) in the chat.
+  2. **Implement:** Write the code for `pandoc_ast.py` in small chunks.
+     - Requirement: Read Pandoc JSON AST.
+     - Requirement: Convert to internal block model.
+     - Requirement: Ensure type hints and docstrings are rigorous.
+     - *Constraint:* Prefer clarity over cleverness.
+
+  ### STEP 4: Phase 5 Milestone Documentation
+  Once the code is implemented:
+  1. Update `requirements.txt` if any new libraries were needed.
+  2. Create the milestone documentation file: `documentation/milestones/P05_Parsers_PandocAST.md`.
+  3. **Content Requirements:**
+     - **"Fresh Terminal" Testing Instructions:**
+       - Setup/Install steps.
+       - **Verification Script:** A Python snippet to parse a sample Pandoc JSON string and print the resulting Block Model object.
+       - **Expected Output:** The specific console output indicating success.
+
+  # NEXT
+
+  **GOAL**: Perform a "Session Flush". Synchronize the volatile session context (code changes, decisions) into the persistent documentation.
+
+**SYSTEM INSTRUCTION: SESSION FLUSH & HANDOFF**
+
+**GOAL:** Synchronize `SSP_PROJECT_STATUS.md` and `CHANGELOG.md` for context continuity.
+**CONTEXT:** `scripts/`, `SSP_PROJECT_STATUS.md`, `CHANGELOG.md`.
+
+**STEP 1: AUDIT & SCAN (Serena/Tools)**
+1. **[IMPORTANT]** Engage **Serena MCP** (if available) to validate the current file architecture against the Roadmap.
+   - *Fallback:* If Serena is unavailable/errors, run `ls -R scripts/` to verify reality.
+2. Read `SSP_PROJECT_STATUS.md` and `CHANGELOG.md`.
+
+**STEP 2: COMPILE STATUS UPDATES**
+Construct the new `SSP_PROJECT_STATUS.md` content:
+
+*   **SECTION A: DASHBOARD (Overwrite)**
+    *   `## 📍 Current Focus`: Set "Active Tasks" and "Next Up" to immediate reality.
+    *   `## 📅 Roadmap`: **[IMPORTANT]** Compare reality vs plan. **REWRITE** lines if the plan changed. Do not just check boxes on a stale plan.
+
+*   **SECTION B: HISTORY (Append)**
+    *   `## 🧠 Decision Log`: Append new architectural decisions using strict format (`* **YYYY-MM-DD:** [Topic] Changed... Reason...`).
+    *   `## 🚧 Known Constraints`: Keep existing.
+
+*   **SECTION C: THE BRAIN DUMP (Overwrite)**
+    *   `## ⚡ Active Context`: Generate a fresh summary of the session.
+    *   **Latest Summary:** 2-3 sentences on status (e.g., "Phase 6 started, HTML generator stubbed").
+    *   **Critical Technical State:** Specifics on broken/risky files.
+    *   **Carry-Over Notes:** User preferences (e.g., "Use Project Mode", "Command Voice tags active").
+
+**STEP 3: CHANGELOG VERIFICATION**
+1. Check if work done in this session is recorded in `CHANGELOG.md`.
+2. If missing, draft a new entry following PRP conventions.
+
+**STEP 4: EXECUTION**
+1. **CRITICAL:** Overwrite `SSP_PROJECT_STATUS.md` with the new content.
+2. **CRITICAL:** Update `CHANGELOG.md` (if needed).
+3. Report: "✅ **Project Status & Changelog Updated.** Ready for Handoff."
+  ```

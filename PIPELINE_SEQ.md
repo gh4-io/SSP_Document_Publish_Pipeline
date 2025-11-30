@@ -235,10 +235,12 @@ implement the core modules in this order:
 1) scripts/ssp_pipeline/config.py
 2) scripts/ssp_pipeline/metadata.py
 3) scripts/ssp_pipeline/pipeline.py
+4) scripts/ssp_pipeline/watch.py
 requirements:
 - config: load layout profiles, paths, and engine choices (weasyprint default)
 - metadata: normalize YAML front matter and related metadata fields
 - pipeline: orchestrate end-to-end flow using utils, parsers, and renderers
+- watch: simple file monitor using `watchdog` or polling; triggers pipeline.py on file save to support WYSIWYG-ish authoring
 handle one module at a time, with a short plan and diffs for each.
 ```
 
@@ -324,7 +326,20 @@ include:
 output as markdown suitable for docs/SSP_Technical_Design.md.
 ```
 
-### 9c) Update PRP and Build Notes
+### 9c) Generate Authoring Guide
+
+**Claude Prompt:**
+
+```text
+create docs/Authoring_Guide.md.
+include:
+- Recommended setup: Obsidian (Live Preview)
+- How to configure Obsidian vault to root of SSP_Pipeline
+- Syntax guide for: Callouts, Tables, Wikilinks, Images
+- How to use the "Watch Mode" command for live PDF/HTML verification
+- Explanation of "Markdown Content vs. PDF Layout" (WYSIWYG caveats)
+
+### 9d) Update PRP and Build Notes
 
 **Claude Prompt:**
 

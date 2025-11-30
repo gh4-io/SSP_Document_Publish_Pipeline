@@ -2,6 +2,68 @@
 
 All notable changes to the SSP Document Publishing Pipeline project.
 
+## [2025-11-30] Phase 6: Renderers (HTML + PDF)
+
+### html_generator.py (361 lines)
+**Purpose:** Convert Block Model → HTML with CSS class mapping
+
+**Functions Implemented (11 total):**
+- `generate_html()` - Orchestrate full HTML document generation with metadata frame
+- `render_block()` - Dispatch to type-specific renderers (heading, paragraph, list, table, code, callout, image, wikilink)
+- `render_heading()` - H1-H6 with CSS classes and optional id attributes
+- `render_paragraph()` - Paragraph blocks with class mapping
+- `render_list()` - Ordered/unordered lists with start number support
+- `render_table()` - Tables with headers, rows, and optional captions
+- `render_code_block()` - Code blocks with language classes
+- `render_callout()` - Obsidian callouts with type-specific styling (WARNING, DANGER, NOTE, TIP)
+- `render_image()` - Images with figure/caption support
+- `render_wikilink()` - Internal link anchors
+- `generate_metadata_frame()` - Document metadata header (doc_id, title, revision, author, date)
+
+**Features:**
+- HTML escaping for all text content (security)
+- CSS class mapping from layout profiles
+- Error-tolerant rendering (logs warnings, continues on non-fatal errors)
+- Metadata embedded in HTML structure
+
+### weasyprint_renderer.py (175 lines)
+**Purpose:** HTML → PDF conversion using WeasyPrint
+
+**Functions Implemented (5 total):**
+- `render_pdf()` - Main PDF generation entry point with multi-CSS support
+- `load_css_files()` - Load and concatenate multiple CSS files
+- `validate_weasyprint_available()` - Check if WeasyPrint installed (using importlib)
+- `apply_pdf_metadata()` - Placeholder for post-processing (metadata via HTML meta tags)
+- `configure_weasyprint()` - Configure rendering options (DPI, base URL, optimization)
+
+**Features:**
+- Multi-CSS file support (layout CSS + theme CSS)
+- Automatic output directory creation
+- Error handling with detailed logging
+- File size reporting
+- WeasyPrint availability validation
+
+### Code Quality
+- Total: 536 lines (361 + 175)
+- Per-file max: 361 lines (well under 500-line limit)
+- Type hints: 100% coverage
+- Docstrings: All public functions documented
+- Linting: ✅ All ruff checks passing
+- Dependencies: stdlib + weasyprint (already in pyproject.toml)
+
+### Testing
+- Milestone test: Mock Block Model → HTML → PDF verified
+- Deliverable: `documentation/milestones/P06_Renderers_HTML_PDF.md`
+
+### Architectural Decisions
+- HTML-first approach: Generate complete HTML with CSS classes before PDF rendering
+- CSS class mapping: Styles map allows flexible theming without code changes
+- Error tolerance: Renderers log warnings but continue on non-fatal errors
+- Metadata embedding: Metadata frame generated in HTML (not post-processed in PDF)
+- Multi-CSS support: Layout CSS + theme CSS loaded separately for flexibility
+
+---
+
 ## [2025-11-30] Phase 4-5: Utils Documentation + Parser Implementation
 
 ### Phase 4: Retroactive Milestone Documentation

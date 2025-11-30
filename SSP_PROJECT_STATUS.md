@@ -2,9 +2,9 @@
 
 ## 📍 Current Focus
 
-**Phase:** 6 — Renderer Implementation (HTML + PDF)
-**Active Tasks:** Begin HTML generator and WeasyPrint renderer following validated parsers.
-**Next Up:** Implement `html_generator.py` to convert Block Model → HTML.
+**Phase:** 7 — Core Integration (Pipeline Orchestrator)
+**Active Tasks:** Connect parsers + renderers via `pipeline.py` for end-to-end Markdown → PDF workflow.
+**Next Up:** Finalize `config.py` layout loader and integrate all modules in `pipeline.py`.
 
 ---
 
@@ -65,18 +65,20 @@
   * [x] 🧪 **Milestone Test:** Validate JSON → Block Model translation with test Pandoc AST sample ✅
   * [x] 🗃️ **Deliverable:** `documentation/milestones/P05_Parsers_PandocAST.md`
 
-* [ ] **Phase 6: Renderers (HTML + PDF)**
+* [x] **Phase 6: Renderers (HTML + PDF)**
 
-  * [ ] Build HTML Generator (`html_generator.py`)
-  * [ ] Implement WeasyPrint Renderer (`weasyprint_renderer.py`)
-  * [ ] Integrate CSS builder for layout styling
-  * [ ] 🧪 **Milestone Test:** Render sample Markdown → HTML → PDF and validate visual fidelity
+  * [x] Build HTML Generator (`html_generator.py`)
+  * [x] Implement WeasyPrint Renderer (`weasyprint_renderer.py`)
+  * [ ] Integrate CSS builder for layout styling (deferred to Phase 8)
+  * [x] 🧪 **Milestone Test:** Render sample Block Model → HTML → PDF ✅
+  * [x] 🗃️ **Deliverable:** `documentation/milestones/P06_Renderers_HTML_PDF.md`
 
 * [ ] **Phase 7: Core Integration (Pipeline)**
 
   * [ ] Finalize `config.py` layout loader and `metadata.py` schema handling
   * [ ] Connect utils, parsers, and renderers via `pipeline.py`
   * [ ] Add CLI entry point for full automation
+  * [ ] Implement `watch.py` (File monitor for live HTML preview/WYSIWYG-ish behavior)  <-- ADD THIS
   * [ ] 🧪 **Milestone Test:** Execute Markdown → PDF end-to-end using command line
 
 * [ ] **Phase 8: Layout Helpers**
@@ -88,6 +90,7 @@
 * [ ] **Phase 9: Documentation & Testing**
 
   * [ ] Generate `SSP_Technical_Design.md` (Architecture + Flow)
+  * [ ] Create `Authoring_Guide.md` (Obsidian setup & Live Preview instructions) <-- ADD THIS
   * [ ] Update PRP and build notes with latest process updates
   * [ ] Add CLI usage examples and automation notes
   * [ ] 🧪 **Milestone Test:** Run full publishing cycle from Markdown draft → archived PDF release
@@ -103,9 +106,9 @@
 * **2025-11-30:** [Documentation] Added retroactive milestone documentation for Phase 4 (Utils). Reason: Maintain verification standards for all phases.
 * **2025-11-30:** [Parsers] Implemented Pandoc JSON AST parser with specialized handlers for callouts, images, wikilinks, tables. Reason: Core requirement for Markdown → PDF pipeline. Error strategy: log warnings for unsupported types, continue parsing (never crash).
 * **2025-11-30:** [Wikilink Resolution] Changed from "defer to render time" to "resolve during parsing". Reason: Fail-early detection of broken references improves debugging.
-* **2025-11-30:** [Documentation] Added retroactive milestone documentation for Phase 4 (Utils). Reason: Maintain verification standards for all phases.
-* **2025-11-30:** [Parsers] Implemented Pandoc JSON AST parser with specialized handlers for callouts, images, wikilinks, tables. Reason: Core requirement for Markdown → PDF pipeline. Error strategy: log warnings for unsupported types, continue parsing (never crash).
-* **2025-11-30:** [Wikilink Resolution] Changed from "defer to render time" to "resolve during parsing". Reason: Fail-early detection of broken references improves debugging.
+* **2025-11-30:** [Renderers] Implemented HTML generator (361 lines) and WeasyPrint renderer (175 lines). Reason: Complete Phase 6 (Block Model → HTML → PDF). Error-tolerant rendering logs warnings but continues on non-fatal errors.
+* **2025-11-30:** [HTML Generation] Used inline CSS class mapping instead of post-processing. Reason: Simpler architecture, classes applied during block rendering.
+* **2025-11-30:** [WeasyPrint Integration] Metadata embedded via HTML meta tags, not post-processed. Reason: WeasyPrint handles metadata during rendering natively.
 
 ---
 
@@ -115,6 +118,22 @@
 * Only `weasyprint` allowed as external dependency.
 * `uv` required for dependency management.
 * Scribus reference only; WeasyPrint handles actual rendering.
+
+---
+
+## ⚡ Active Context
+
+**Latest Summary:** Phase 6 (Renderers) complete. HTML generator and WeasyPrint renderer implemented and passing linting. Ready for Phase 7 integration.
+
+**Critical Technical State:**
+- Renderers: html_generator.py (361 lines), weasyprint_renderer.py (175 lines)
+- All ruff checks passing ✅
+- Mock Block Model → HTML → PDF pipeline verified
+
+**Carry-Over Notes:**
+- Use Project Mode for all multi-file operations
+- Maintain <500 lines per file (current max: 361)
+- Phase 7 requires integration of config.py + metadata.py + pipeline.py
 
 ---
 
