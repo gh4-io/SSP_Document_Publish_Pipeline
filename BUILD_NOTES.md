@@ -1,14 +1,39 @@
 # build_notes.md — Claude Code Project Session Summary
 
+> USE: The "Command Voice" Tags
+> I highly recommend you use these specific tags in your prompts to control Claude Code. They act like "System Overrides."
+> 
+> | Tag | Best Use Case | Example |
+> | :--- | :--- | :--- |
+> | **`[IMPORTANT]`** | General constraints you don't want ignored. | `[IMPORTANT] Do not remove the license header when editing.` |
+> | **`CRITICAL:`** | Safety checks or destructive actions. | `CRITICAL: Do not write to disk until you have verified the file path.` |
+> | **`[STOP]`** | Breaking a loop or preventing hallucination. | `[STOP] Do not implement the function yet. Just plan it.` |
+> | **`CONTEXT:`** | Defining the scope of knowledge. | `CONTEXT: Only use the files in scripts/ssp_pipeline/` |
+> | **`GOAL:`** | Focusing the output. | `GOAL: Refactor config.py to reduce complexity.` |
+
+
 ## ⚡ Quick Start / Boot Command
 
 Use this every time you start, reopen, or reload the project:
 
-```text
+updated 11/30:
+
+```bash
+Act as the SSP Pipeline Architect.
+Rules: PRP/SSP_PRP_CORE.md
+Specs: SSP_Document_Publish_Pipeline_CORE.md
+Context: CLAUDE.md
+
+Adopt the workflow defined in PRP immediately.
+When context is loaded, reply only with: "SSP Pipeline Ready."
+```
+
+
+```bash
 use PRP/SSP_PRP_CORE.md as project rules.
 quietly read:
-- SSP_Document_Publish_Pipeline_CORE.md
-- CLAUDE.md
+- PRP/SSP_Document_Publish_Pipeline_CORE.md
+- PRP/CLAUDE.md
 when done, reply only with: ready
 ```
 
@@ -24,7 +49,7 @@ If you edit **SSP_PRP_CORE.md**, **SSP_Document_Publish_Pipeline_CORE.md**, or *
 1. Save your changes.
 2. In Claude Code, run:
 
-   ```text
+   ```bash
    reload PRP/SSP_PRP_CORE.md to include the latest project rules.
    ```
 3. Claude will confirm with something like:
@@ -32,11 +57,11 @@ If you edit **SSP_PRP_CORE.md**, **SSP_Document_Publish_Pipeline_CORE.md**, or *
 
 If you restart VS Code or open a new session:
 
-```text
+```bash
 use PRP/SSP_PRP_CORE.md as project rules.
 quietly read:
-- SSP_Document_Publish_Pipeline_CORE.md
-- CLAUDE.md
+- PRP/SSP_Document_Publish_Pipeline_CORE.md
+- PRP/CLAUDE.md
 when done, reply only with: ready
 ```
 

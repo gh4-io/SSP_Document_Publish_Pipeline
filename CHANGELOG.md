@@ -2,9 +2,9 @@
 
 All notable changes to the SSP Document Publishing Pipeline project.
 
-## [2025-11-30] Phase 0-2: Initial Implementation
+## [2025-11-30] Phase 1-4: Initial Implementation
 
-### Phase 0: Project Scaffold and Architecture
+### Phase 2: Project Scaffold and Architecture
 **Commit:** e59cef9 (2025-11-30)
 
 **Core:**
@@ -43,7 +43,7 @@ All notable changes to the SSP Document Publishing Pipeline project.
 - Removed legacy Scribus-centered documentation
 - Reformatted layout profiles and templates
 
-### Phase 1: Documentation and Code Quality
+### Phase 3: Documentation and Code Quality
 **Commit:** ec44df6 (2025-11-30)
 
 **All Modules:**
@@ -62,7 +62,7 @@ All notable changes to the SSP Document Publishing Pipeline project.
 - Documented Scribus renderer as legacy fallback option
 - Clarified WeasyPrint as primary rendering engine
 
-### Phase 2: Utils Layer Implementation
+### Phase 4: Utils Layer Implementation
 **Commits:** f5fada0, d27e572, fad2a8e (2025-11-30)
 
 **Utils - Logging (89 lines):**
