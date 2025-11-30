@@ -11,6 +11,15 @@ priority:
 - scribus = design only, not render
 - markdown = single source of truth
 
+roles:
+- coder (Claude Code):
+  - focus: implementation, refactoring, testing.
+  - context: specific files being edited + project rules.
+- auditor (Serena / MCP):
+  - focus: repo-wide analysis, drift detection, roadmap verification.
+  - task: compare `SSP_PROJECT_STATUS.md` vs actual file state.
+  - frequency: run before major phases or when "lost".
+
 agent rules:
 - read:
   - PRP/SSP_Document_Publish_Pipeline_CORE.md
@@ -21,7 +30,11 @@ agent rules:
 - must:
   - use weasyprint pipeline by default
   - keep functions small, typed
-  - keep files < 500 lines
+  - complexity over brevity: 
+    - target < 500 lines per file.
+    - if > 500 lines: prefer cohesive logic over artificial splitting.
+    - if > 800 lines: mandatory refactor proposal required.
+  - docstrings: mandatory for all public functions (does not count toward complexity).
   - run ruff / pytest when possible
 
 code layout (target):
@@ -77,7 +90,7 @@ example changelog:
 
 model usage policy:
 - default: Claude 3.5 Sonnet (planning, reading, maintenance)
-- code generation: Claude 3 Opus (or highest available)
+- code generation: Claude 3.5 Sonnet (default)
 - bulk text or markdown editing: Claude 3 Haiku
 - agents should automatically select the model based on task type.
 - prefer lower-token models for reading or summarization to minimize cost.
@@ -90,11 +103,10 @@ project mode policy:
 - when uncertain, stay in Project Mode to preserve repo context.
 
 session reload policy:
-- when project context is lost or VS Code restarts, auto-run boot command:
-  use PRP/SSP_PRP_CORE.md as project rules.
-  quietly read SSP_Document_Publish_Pipeline_CORE.md and CLAUDE.md.
-- respond "ready" when cache restored.
-- confirm PRP version and last changelog line to verify sync.
+- when project context is lost or VS Code restarts:
+  1. User will run/prompt: "Run the boot command and digest the rules."
+  2. Agent must execute `boot` (which cats the core rules).
+  3. Agent must reply "SSP Pipeline Ready" when context is restored.
 
 comment and docstring policy:
 
@@ -140,3 +152,36 @@ environment policy:
   uv add --dev ruff pytest
 - ensure these dev tools are always present:
   ruff, pytest, weasyprint, pandoc
+
+
+changelog policy:
+- maintain a CHANGELOG.md in the project root.
+- use this structure:
+  # Changelog
+
+  ## [YYYY-MM-DD] <short phase or feature name>
+  - <1–2 sentence summary>
+  - <bullets grouped by area: utils, parsers, renderers, core, layouts, tests, docs, PRP>
+
+- language must be plain and human-readable.
+- never delete or rewrite past entries; always append new ones at the top.
+
+changelog automation rule:
+- after each significant phase or commit batch, Claude may:
+  1) inspect the current git diff and relevant files.
+  2) propose a new changelog entry (date, phase title, bullets).
+  3) show the proposed CHANGELOG.md diff.
+  4) only write to CHANGELOG.md after user approval.
+- changelog updates should be included in the same commit as the related code changes.
+
+
+project state policy:
+- The file `SSP_PROJECT_STATUS.md` is the source of truth for progress.
+- BEFORE starting code: Read `SSP_PROJECT_STATUS.md`.
+- AFTER finishing a task:
+  1. Check off the item in `SSP_PROJECT_STATUS.md`.
+  2. Update the "Current Focus" section.
+  3. Log any architectural changes in "Decision Log".
+- If the user requests work that contradicts the Roadmap:
+  - Warning: "This deviates from the Phase <X> plan."
+  - Ask: "Should we update the Decision Log and Proceed?"
