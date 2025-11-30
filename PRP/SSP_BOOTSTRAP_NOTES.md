@@ -2,11 +2,11 @@
 
 repo root:
 - SSP_Document_Publish_Pipeline/
-  - CLAUDE.md
-  - SSP_Document_Publish_Pipeline_CORE.md
+  - PRP/CLAUDE.md
+  - PRP/SSP_Document_Publish_Pipeline_CORE.md
   - PRP/SSP_PRP_CORE.md
   - scripts/ssp_pipeline/ (stubs ok)
-  - drafts/, templates/, assets/, published/, releases/, styles/
+  - drafts/, templates/, assets/, published/, releases/, styles/, logs/, documentation
 
 env:
 - uv venv
