@@ -2,9 +2,9 @@
 
 ## 📍 Current Focus
 
-**Phase:** 5 — Parser Implementation and Core Integration
-**Active Tasks:** Finalize `pandoc_ast.py` and begin initial testing with `pipeline.py`.
-**Next Up:** Begin renderer phase (HTML + WeasyPrint) following AST validation.
+**Phase:** 6 — Renderer Implementation (HTML + PDF)
+**Active Tasks:** Begin HTML generator and WeasyPrint renderer following validated parsers.
+**Next Up:** Implement `html_generator.py` to convert Block Model → HTML.
 
 ---
 
@@ -52,15 +52,18 @@
   * [x] Implement logging system (daily rotation, structured output)
   * [x] Implement file operations (directory creation, archiving, asset resolution)
   * [x] Implement validators (frontmatter, CSS, layout profile checks)
-  * [ ] 🧪 **Milestone Test:** Run test scripts verifying log creation, directory management, and validation errors
+  * [x] 🧪 **Milestone Test:** Run test scripts verifying log creation, directory management, and validation errors ✅
+  * [x] 🗃️ **Deliverable:** `documentation/milestones/P04_Utilities_Core.md`
 
-* [ ] **Phase 5: Parsers (Pandoc AST)**
+* [x] **Phase 5: Parsers (Pandoc AST)**
 
-  * [ ] Implement `pandoc_ast.py` (JSON → Internal Block Model conversion)
-  * [ ] Implement `callouts.py` (admonition parsing)
-  * [ ] Implement `tables.py` (Pandoc table structure mapping)
-  * [ ] Implement `wikilinks.py` (internal reference resolution)
-  * [ ] 🧪 **Milestone Test:** Validate JSON → Block Model translation with test Pandoc AST sample
+  * [x] Implement `pandoc_ast.py` (JSON → Internal Block Model conversion)
+  * [x] Implement `callouts.py` (Obsidian callout documentation)
+  * [x] Implement `tables.py` (Pandoc table structure mapping)
+  * [x] Implement `wikilinks.py` (internal reference resolution)
+  * [x] Implement `images.py` (image path resolution)
+  * [x] 🧪 **Milestone Test:** Validate JSON → Block Model translation with test Pandoc AST sample ✅
+  * [x] 🗃️ **Deliverable:** `documentation/milestones/P05_Parsers_PandocAST.md`
 
 * [ ] **Phase 6: Renderers (HTML + PDF)**
 
@@ -97,6 +100,12 @@
 * **2025-11-30:** Combined PRP and CLAUDE contexts for unified automation.
 * **2025-11-30:** Separated layout logic into individual helpers for modularity.
 * **2025-11-30:** Enforced <500-line guideline for maintainability.
+* **2025-11-30:** [Documentation] Added retroactive milestone documentation for Phase 4 (Utils). Reason: Maintain verification standards for all phases.
+* **2025-11-30:** [Parsers] Implemented Pandoc JSON AST parser with specialized handlers for callouts, images, wikilinks, tables. Reason: Core requirement for Markdown → PDF pipeline. Error strategy: log warnings for unsupported types, continue parsing (never crash).
+* **2025-11-30:** [Wikilink Resolution] Changed from "defer to render time" to "resolve during parsing". Reason: Fail-early detection of broken references improves debugging.
+* **2025-11-30:** [Documentation] Added retroactive milestone documentation for Phase 4 (Utils). Reason: Maintain verification standards for all phases.
+* **2025-11-30:** [Parsers] Implemented Pandoc JSON AST parser with specialized handlers for callouts, images, wikilinks, tables. Reason: Core requirement for Markdown → PDF pipeline. Error strategy: log warnings for unsupported types, continue parsing (never crash).
+* **2025-11-30:** [Wikilink Resolution] Changed from "defer to render time" to "resolve during parsing". Reason: Fail-early detection of broken references improves debugging.
 
 ---
 

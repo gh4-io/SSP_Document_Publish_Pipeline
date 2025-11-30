@@ -2,6 +2,47 @@
 
 All notable changes to the SSP Document Publishing Pipeline project.
 
+## [2025-11-30] Phase 4-5: Utils Documentation + Parser Implementation
+
+### Phase 4: Retroactive Milestone Documentation
+**Deliverable:** `documentation/milestones/P04_Utilities_Core.md`
+
+**Content:**
+- Fresh terminal testing instructions for logging, file_ops, validators
+- Verification script with expected output
+- Function capability summary (11 functions, 351 LOC)
+
+### Phase 5: Pandoc AST Parser Implementation
+
+**Core Parser (`pandoc_ast.py` - 5 functions, ~140 lines):**
+- Implemented `parse_pandoc_json()` - JSON loading and error handling
+- Implemented `parse_block()` - Type dispatch for all Pandoc block types (Header, Para, BulletList, OrderedList, CodeBlock, BlockQuote→Callout, Table)
+- Implemented `extract_inline_text()` - Recursive inline element flattening (Str, Space, LineBreak, Emph, Strong, Code, Link, Image)
+- Implemented `detect_callout()` - Obsidian admonition detection (`[!WARNING]`, `[!DANGER]`, `[!NOTE]`, `[!TIP]`, `[!INFO]`, `[!CAUTION]`)
+- Implemented `parse_wikilink()` - Internal reference syntax parsing (`[[target | display]]`)
+
+**Specialized Parsers (~430 lines total):**
+- `callouts.py` (~50 lines) - Documentation module (logic in core parser)
+- `images.py` (~95 lines) - Asset path resolution via file_ops integration (standard Markdown + Obsidian wikilink images)
+- `wikilinks.py` (~110 lines) - Target resolution against published/ directory (exact match, glob, recursive search)
+- `tables.py` (~225 lines) - Pandoc table structure → simplified headers/rows model
+
+**Testing:**
+- Created `tests/fixtures/sample_test.json` with realistic Pandoc JSON
+- Verified parser with 5 block types (heading, paragraph, list, callout, code)
+- Phase 5 milestone test passing ✅
+
+**Code Quality:**
+- All functions < 50 lines
+- Full type hints and docstrings
+- Stdlib-only dependencies (json, pathlib, re, logging, typing)
+- Total parser layer: ~570 lines across 5 modules
+- Error handling: log warnings for unsupported Pandoc types, never crash
+
+**Deliverable:** `documentation/milestones/P05_Parsers_PandocAST.md`
+
+---
+
 ## [2025-11-30] Phase 1-4: Initial Implementation
 
 ### Phase 2: Project Scaffold and Architecture
