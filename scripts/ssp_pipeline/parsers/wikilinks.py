@@ -14,13 +14,10 @@ Resolves links to:
 """
 
 from pathlib import Path
-from typing import Optional
 import logging
 
 # Import from parent package
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from parsers.pandoc_ast import Wikilink, parse_wikilink
+from .pandoc_ast import Wikilink, parse_wikilink
 
 
 logger = logging.getLogger(__name__)

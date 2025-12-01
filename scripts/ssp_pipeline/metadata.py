@@ -44,11 +44,15 @@ def parse_frontmatter(markdown_path: Path) -> Dict[str, Any]:
 
     yaml_text = match.group(1)
 
-    # Simple YAML parser (key: value pairs only - no nested structures)
+    # Simple YAML parser (key: value pairs + simple arrays)
     # For production, could use PyYAML, but keeping stdlib-only for now
     metadata = {}
-    for line in yaml_text.split('\n'):
-        line = line.strip()
+    lines = yaml_text.split('\n')
+    i = 0
+    while i < len(lines):
+        line = lines[i].strip()
+        i += 1
+
         if not line or line.startswith('#'):
             continue
 
@@ -57,13 +61,32 @@ def parse_frontmatter(markdown_path: Path) -> Dict[str, Any]:
             key = key.strip()
             value = value.strip()
 
-            # Remove quotes if present
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
-            elif value.startswith("'") and value.endswith("'"):
-                value = value[1:-1]
-
-            metadata[key] = value
+            # Check if value is empty (array follows on next lines)
+            if not value:
+                # Look ahead for array items (lines starting with -)
+                array_items = []
+                while i < len(lines):
+                    next_line = lines[i].strip()
+                    if next_line.startswith('- '):
+                        # Extract array item
+                        item = next_line[2:].strip()
+                        # Remove quotes if present
+                        if item.startswith('"') and item.endswith('"'):
+                            item = item[1:-1]
+                        elif item.startswith("'") and item.endswith("'"):
+                            item = item[1:-1]
+                        array_items.append(item)
+                        i += 1
+                    else:
+                        break
+                metadata[key] = array_items
+            else:
+                # Remove quotes if present
+                if value.startswith('"') and value.endswith('"'):
+                    value = value[1:-1]
+                elif value.startswith("'") and value.endswith("'"):
+                    value = value[1:-1]
+                metadata[key] = value
 
     logger.debug(f"Extracted {len(metadata)} metadata fields")
     return metadata
@@ -97,6 +120,7 @@ def normalize_metadata(raw_meta: Dict[str, Any]) -> Dict[str, Any]:
         "version": "revision",
         "date": "effective_date",
         "effectivedate": "effective_date",
+        "owner": "author",  # DTS profile uses "owner", pipeline expects "author"
     }
 
     # Normalize field names
@@ -182,3 +206,49 @@ def merge_with_defaults(metadata: Dict[str, Any], defaults: Dict[str, Any]) -> D
 
     logger.debug(f"Merged metadata: {len(merged)} fields total")
     return merged
+
+
+def resolve_profile_path(metadata: Dict[str, Any], fallback_profile: Path) -> Path:
+    """
+    Resolve layout profile path from metadata or fallback.
+
+    Args:
+        metadata: Parsed metadata dictionary
+        fallback_profile: Default profile path if not specified in metadata
+
+    Returns:
+        Resolved Path to layout profile JSON
+
+    Raises:
+        FileNotFoundError: If resolved profile does not exist
+    """
+    # Check if pipeline_profile specified in frontmatter
+    if "pipeline_profile" in metadata:
+        profile_name = metadata["pipeline_profile"]
+        logger.info(f"Document specifies pipeline_profile: {profile_name}")
+
+        # Profile name mapping (short name → full path)
+        profile_map = {
+            "dts_master_report": "templates/profiles/layout_profile_dts_master_report.json",
+            "default": "templates/profiles/layout_profile_default.json",
+        }
+
+        if profile_name in profile_map:
+            profile_path = Path(profile_map[profile_name])
+            logger.debug(f"Mapped '{profile_name}' → {profile_path}")
+        else:
+            # Assume it's a direct path
+            profile_path = Path(profile_name)
+            logger.debug(f"Using direct path: {profile_path}")
+
+        # Validate profile exists
+        if not profile_path.exists():
+            raise FileNotFoundError(
+                f"Layout profile specified in frontmatter not found: {profile_path}"
+            )
+
+        return profile_path
+
+    # Use fallback (command-line argument)
+    logger.debug(f"No pipeline_profile in frontmatter, using fallback: {fallback_profile}")
+    return fallback_profile

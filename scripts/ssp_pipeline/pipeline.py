@@ -6,6 +6,7 @@ Part of SSP Document Publishing Pipeline v4.
 
 import subprocess
 import logging
+import time
 from pathlib import Path
 from typing import Optional, List
 
@@ -14,6 +15,7 @@ from . import metadata as meta_module
 from .parsers import pandoc_ast
 from .renderers import html_generator
 from .renderers import weasyprint_renderer
+from .renderers import scribus_renderer
 from .utils import logging as log_utils
 from .utils import file_ops
 from .utils import validators
@@ -55,16 +57,23 @@ def run_pipeline(
         ValueError: If validation fails
         RuntimeError: If pipeline execution fails
     """
+    start_time = time.time()
     logger.info("=" * 60)
     logger.info("SSP Document Publishing Pipeline v4 Starting")
     logger.info("=" * 60)
-    log_utils.log_pipeline_start(str(markdown_path))
 
-    # Step 1: Load layout profile
-    logger.info("Step 1/9: Loading layout profile")
-    profile = config.load_layout_profile(profile_path)
+    # Step 1: Parse frontmatter early to resolve profile
+    logger.info("Step 1/9: Resolving layout profile")
+    raw_metadata = meta_module.parse_frontmatter(markdown_path)
+    resolved_profile_path = meta_module.resolve_profile_path(raw_metadata, profile_path)
+    logger.info(f"Using profile: {resolved_profile_path}")
+
+    log_utils.log_pipeline_start(markdown_path, resolved_profile_path)
+
+    profile = config.load_layout_profile(resolved_profile_path)
     rendering_engine = config.get_rendering_engine(profile)
-    base_dir = profile_path.parent.parent  # Go up to repo root
+    # Use current working directory as base_dir (repo root)
+    base_dir = Path.cwd()
     resources = config.get_resource_paths(profile, base_dir)
     styles_map = config.get_styles_map(profile)
 
@@ -76,9 +85,8 @@ def run_pipeline(
     else:
         logger.warning("Step 2/9: Skipping validation (not recommended)")
 
-    # Step 3: Parse Markdown frontmatter
-    logger.info("Step 3/9: Parsing frontmatter")
-    raw_metadata = meta_module.parse_frontmatter(markdown_path)
+    # Step 3: Normalize metadata
+    logger.info("Step 3/9: Normalizing metadata")
     normalized_metadata = meta_module.normalize_metadata(raw_metadata)
     doc_id = meta_module.extract_document_id(normalized_metadata)
     logger.info(f"Document ID: {doc_id}")
@@ -100,6 +108,16 @@ def run_pipeline(
     # Step 7: Render to PDF
     logger.info(f"Step 7/9: Rendering to PDF using {rendering_engine}")
 
+    # Determine output path
+    if output_dir:
+        pdf_out = output_dir / f"{doc_id}.pdf"
+    elif "pdf_directory" in resources:
+        pdf_out = resources["pdf_directory"] / f"{doc_id}.pdf"
+    else:
+        pdf_out = Path(f"published/pdf/{doc_id}.pdf")
+
+    file_ops.ensure_dir(pdf_out.parent)
+
     if rendering_engine == "weasyprint":
         # Get CSS paths from resources
         css_paths: List[Path] = []
@@ -108,37 +126,48 @@ def run_pipeline(
         if "markdown_theme" in resources:
             css_paths.append(resources["markdown_theme"])
 
-        # Determine output path
-        if output_dir:
-            pdf_out = output_dir / f"{doc_id}.pdf"
-        elif "pdf_directory" in resources:
-            pdf_out = resources["pdf_directory"] / f"{doc_id}.pdf"
-        else:
-            pdf_out = Path(f"published/pdf/{doc_id}.pdf")
-
-        file_ops.ensure_dir(pdf_out.parent)
         pdf_path = weasyprint_renderer.render_pdf(
             html_content,
             css_paths,
             pdf_out,
             normalized_metadata
         )
+    elif rendering_engine == "scribus":
+        # Get .sla template from resources
+        if "scribus_template" not in resources:
+            raise ValueError("Scribus engine requires 'scribus_template' in profile resources")
+
+        sla_template = resources["scribus_template"]
+        pdf_path = scribus_renderer.render_pdf_from_sla(
+            sla_template,
+            blocks,
+            normalized_metadata,
+            pdf_out,
+            styles_map
+        )
     else:
         raise NotImplementedError(f"Rendering engine '{rendering_engine}' not yet implemented")
 
-    # Step 8: Copy to published/
-    logger.info("Step 8/9: Copying to published directory")
-    published_path = file_ops.copy_to_published(pdf_path, doc_id)
+    # Step 8: Copy to published/ (if not already there)
+    logger.info("Step 8/9: Ensuring file in published directory")
+    # Check if PDF is already in a published directory (handles both published/ and templates/published/)
+    if pdf_path.match(f"*/published/pdf/{doc_id}.pdf"):
+        published_path = pdf_path
+        logger.debug(f"PDF already in published directory: {published_path}")
+    else:
+        published_path = file_ops.copy_to_published(pdf_path, "pdf", doc_id)
 
     # Step 9: Archive to releases/
     logger.info("Step 9/9: Archiving to releases")
     category = doc_id.split('-')[0]  # Extract SOP, STD, REF, APP
-    file_ops.archive_to_releases(published_path, category)
+    version = normalized_metadata.get("revision", "1.0")
+    file_ops.archive_to_releases(published_path, category, doc_id, version)
 
     # Cleanup temp files
     cleanup_temp_files(temp_json.parent)
 
-    log_utils.log_pipeline_complete(str(markdown_path), str(published_path))
+    duration = time.time() - start_time
+    log_utils.log_pipeline_complete(published_path, duration)
     logger.info("=" * 60)
     logger.info(f"Pipeline Complete! Output: {published_path}")
     logger.info("=" * 60)
@@ -229,3 +258,25 @@ def get_pipeline_version() -> str:
         Version string (e.g., "4.0.0")
     """
     return "4.0.0"
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) < 3:
+        print("Usage: python -m scripts.ssp_pipeline.pipeline <markdown_file> <profile_json>")
+        print("\nExample:")
+        print("  python -m scripts.ssp_pipeline.pipeline drafts/SOP-200.md templates/profiles/layout_profile_default.json")
+        sys.exit(1)
+
+    markdown_path = Path(sys.argv[1])
+    profile_path = Path(sys.argv[2])
+
+    try:
+        output_pdf = run_pipeline(markdown_path, profile_path)
+        print(f"\n✅ Pipeline complete: {output_pdf}")
+    except Exception as e:
+        import traceback
+        print(f"\n❌ Pipeline failed: {e}")
+        traceback.print_exc()
+        sys.exit(1)

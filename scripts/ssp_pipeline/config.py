@@ -72,8 +72,16 @@ def get_rendering_engine(profile: Dict[str, Any]) -> str:
         KeyError: If rendering_engine not in profile
         ValueError: If rendering_engine value is invalid
     """
-    # Default to weasyprint if not specified (new profiles)
-    engine = profile.get("rendering_engine", "weasyprint")
+    # Check for explicit rendering_engine field
+    if "rendering_engine" in profile:
+        engine = profile["rendering_engine"]
+    # Auto-detect scribus if scribus_template present in resources
+    elif "resources" in profile and "scribus_template" in profile["resources"]:
+        engine = "scribus"
+        logger.info("Auto-detected rendering engine: scribus (scribus_template found)")
+    else:
+        # Default to weasyprint for new profiles
+        engine = "weasyprint"
 
     valid_engines = ["weasyprint", "scribus"]
     if engine not in valid_engines:

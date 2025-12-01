@@ -14,10 +14,7 @@ from typing import Dict, Any, List, Optional
 import logging
 
 # Import from parent package
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from parsers.pandoc_ast import Table, extract_inline_text
+from .pandoc_ast import Table, extract_inline_text
 
 
 logger = logging.getLogger(__name__)
@@ -51,12 +48,12 @@ def parse_table_element(table_data: Dict[str, Any]) -> Optional[Table]:
         logger.warning("Invalid Table element structure")
         return None
 
-    attrs = content[0]
+    content[0]
     caption_obj = content[1]
-    colspecs = content[2]
+    content[2]
     table_head = content[3]
     table_bodies = content[4]
-    table_foot = content[5]
+    content[5]
 
     # Extract caption (if present)
     caption = extract_caption(caption_obj)

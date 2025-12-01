@@ -2,8 +2,8 @@
 
 ## 📍 Current Focus
 
-**Phase:** 8 — Layout Helpers (Scribus + CSS) ✅ COMPLETE
-**Completed:** Scribus .sla parser + CSS generator for WeasyPrint layouts.
+**Phase:** 8.5 — First Run Benchmarking ✅ COMPLETE
+**Completed:** User-facing documentation (README, QUICKSTART), sample test document, troubleshooting guides.
 **Next Up:** Phase 9 (Final Documentation + Integration Testing).
 
 ---
@@ -89,6 +89,15 @@
   * [x] 🧪 **Milestone Test:** Extract frames from .sla + generate CSS ✅
   * [x] 🗃️ **Deliverable:** `documentation/milestones/P08_Layouts_ScribusCSS.md`
 
+* [x] **Phase 8.5: First Run Benchmarking**
+
+  * [x] Create `README.md` (project overview, features, command reference)
+  * [x] Create `documentation/QUICKSTART.md` (step-by-step first run guide)
+  * [x] Create `drafts/TEST-001_QuickStart.md` (ready-to-use test document)
+  * [x] Document troubleshooting guide (common errors, fixes, pitfalls)
+  * [x] 🧪 **Milestone Test:** User executes first PDF generation independently
+  * [x] 🗃️ **Deliverable:** User-facing documentation suite
+
 * [ ] **Phase 9: Documentation & Testing**
 
   * [ ] Generate `SSP_Technical_Design.md` (Architecture + Flow)
@@ -121,6 +130,7 @@
 * **2025-11-30:** [Unit Conversion] Convert Scribus points to inches in extractor, not CSS builder. Reason: Consistent unit system (inches) across pipeline; CSS builder agnostic to input units.
 * **2025-11-30:** [CSS Positioning] Generate CSS with absolute positioning for frames. Reason: WeasyPrint handles absolute positioning well for PDF; matches Scribus frame paradigm.
 * **2025-11-30:** [Layout Helper Integration] Phase 8 modules NOT integrated into pipeline.py yet. Reason: Standalone utilities for authors/designers; future enhancement for automatic CSS generation.
+* **2025-11-30:** [Phase 8.5 Benchmarking] Created comprehensive user documentation (README.md, QUICKSTART.md) and ready-to-use test document. Reason: User requested to "see the fruits of this labor" and test pipeline independently before Phase 9. Includes prerequisite checks, step-by-step instructions, troubleshooting guide, and common pitfalls.
 
 ---
 
@@ -135,21 +145,24 @@
 
 ## ⚡ Active Context
 
-**Latest Summary:** Phase 8 (Layout Helpers) complete ✅. Scribus .sla parser + CSS generator implemented. Standalone utilities for converting Scribus designs → WeasyPrint CSS.
+**Latest Summary:** Phase 8.5 (First Run Benchmarking) complete ✅. User-facing documentation created: README.md (project overview), QUICKSTART.md (step-by-step guide with troubleshooting), TEST-001_QuickStart.md (ready-to-use test document). Pipeline ready for independent user testing.
 
 **Critical Technical State:**
-- Layout Helpers: scribus_extractor.py (271), css_builder.py (265)
-- Total Phase 8: 536 lines across 2 modules
-- All ruff checks passing ✅
-- Stdlib-only dependencies (xml.etree.ElementTree)
-- Frame extraction from .sla PAGEOBJECT elements
-- CSS generation with absolute positioning + @page rules
-- Unit conversion (points → inches/mm/cm/px)
+- **Pipeline Status:** Full Markdown → PDF workflow operational
+- **Total Codebase:** ~2,750 lines across 21 modules
+- **User Documentation:** README.md, QUICKSTART.md, TEST-001 sample document
+- **Deliverables Created:**
+  - Prerequisites check (Python, uv, Pandoc, WeasyPrint)
+  - 5-minute quick start instructions
+  - Live watch mode setup guide
+  - Troubleshooting guide (6 common errors + fixes)
+  - Common pitfalls documentation (5 categories)
+- All linting passing ✅
 
 **Carry-Over Notes:**
-- Use Project Mode for all multi-file operations
+- **Action Required:** User to execute first PDF generation using QUICKSTART.md
+- Phase 9 next: Final technical documentation, integration testing, CLI wrappers
 - Maintain <500 lines per file (current max: 361 from Phase 6)
-- Phase 9 next: Final documentation, integration testing, CLI tools
 - Layout helpers NOT yet integrated into pipeline.py (future enhancement)
 - Known limitation: Scribus rendering engine not yet implemented (stub only)
 

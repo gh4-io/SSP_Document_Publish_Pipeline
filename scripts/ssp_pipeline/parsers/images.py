@@ -15,10 +15,8 @@ from typing import Dict, Any, Optional
 import logging
 
 # Import from parent package
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from utils.file_ops import resolve_asset_path
-from parsers.pandoc_ast import Image
+from ..utils.file_ops import resolve_asset_path
+from .pandoc_ast import Image
 
 
 logger = logging.getLogger(__name__)
@@ -47,7 +45,7 @@ def parse_image_element(image_data: Dict[str, Any], base_dir: Path) -> Optional[
         return None
 
     # Extract components
-    attrs = content[0]  # [id, classes, key-value pairs]
+    content[0]  # [id, classes, key-value pairs]
     alt_inlines = content[1]  # List of inline elements for alt text
     target_info = content[2]  # [target_path, title]
 
@@ -55,7 +53,7 @@ def parse_image_element(image_data: Dict[str, Any], base_dir: Path) -> Optional[
     title = target_info[1] if len(target_info) > 1 else None
 
     # Extract alt text from inline elements
-    from parsers.pandoc_ast import extract_inline_text
+    from .pandoc_ast import extract_inline_text
     alt_text = extract_inline_text(alt_inlines) if alt_inlines else None
 
     # Resolve relative path to absolute

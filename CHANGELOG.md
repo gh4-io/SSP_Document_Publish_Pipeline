@@ -2,6 +2,108 @@
 
 All notable changes to the SSP Document Publishing Pipeline project.
 
+## [2025-11-30] Phase 8.5: First Run Benchmarking
+
+### Overview
+**Status:** ✅ Complete
+**Deliverable:** User-facing documentation suite for independent pipeline testing
+
+### Documentation Created
+
+#### README.md (Root-level Overview)
+**Purpose:** Project overview, features, and command reference
+
+**Sections:**
+- What Is This? (Document publishing utility definition)
+- Core Features (Processing, layouts, workflow, advanced features)
+- Quick Command Reference (Pipeline, watch mode, layout extraction)
+- Architecture (9-step flow, module structure diagram)
+- Dependencies (Required and optional)
+- Project Status (Current phase, completed modules)
+- Documentation index
+
+**Target Audience:** New users, project stakeholders, developers
+
+---
+
+#### documentation/QUICKSTART.md (Step-by-Step Guide)
+**Purpose:** Comprehensive first-run instructions for independent user testing
+
+**Sections:**
+1. **Prerequisites Check** (Python, uv, Pandoc, WeasyPrint verification)
+2. **Your First PDF (5-Minute Test)**
+   - Step 1: Create test document (TEST-001_QuickStart.md)
+   - Step 2: Verify layout profile exists (or create minimal default)
+   - Step 3: Create minimal CSS files (layout + theme)
+   - Step 4: Run pipeline command
+   - Step 5: Check output (published/ + releases/)
+3. **Live Watch Mode** (WYSIWYG-ish editing setup)
+4. **Troubleshooting Guide** (6 common errors with fixes):
+   - Pandoc not found
+   - WeasyPrint Cairo library not found
+   - Invalid frontmatter (missing required fields)
+   - Layout profile not found
+   - CSS file not found
+   - PDF generated but looks broken
+   - Watch mode not detecting changes
+5. **Common Pitfalls** (5 categories):
+   - Document ID format (SOP-200 vs sop-200)
+   - YAML frontmatter syntax
+   - Markdown syntax for Obsidian extensions
+   - File paths (Windows/WSL conversion)
+   - Missing directories
+6. **Next Steps** (After successful first run)
+7. **Getting Help** (Error reporting guidelines)
+
+**Target Audience:** Jason (primary user) executing first independent PDF generation
+
+---
+
+#### drafts/TEST-001_QuickStart.md (Sample Document)
+**Purpose:** Ready-to-use test document with comprehensive Markdown examples
+
+**Content:**
+- Valid YAML frontmatter (document_id, title, revision, author, effective_date)
+- 8 sections demonstrating:
+  - Basic formatting (bold, italic)
+  - Lists (unordered, ordered, nested)
+  - Callouts (WARNING, NOTE, DANGER, TIP)
+  - Code blocks (Python, SQL with syntax highlighting)
+  - Tables (fleet data, maintenance types)
+  - Inline formatting
+  - Links and references (wikilinks, external URLs)
+  - Images (placeholder)
+- Metadata verification checklist
+
+**Expected Output:** ~2-page PDF with formatted content, metadata header
+
+---
+
+### Code Quality
+- No new code modules (documentation only)
+- Linting: N/A
+- Dependencies: None added
+
+### Testing Instructions
+**User Action Required:** Follow QUICKSTART.md to:
+1. Verify prerequisites installed
+2. Execute 5-minute test
+3. Generate TEST-001_QuickStart.pdf
+4. Report back with results or errors
+
+### Architectural Decisions
+- **Documentation First:** Created comprehensive user docs before Phase 9 technical docs. Reason: User requested to "see output" and test independently.
+- **Troubleshooting Emphasis:** Included 6 common errors with explicit fixes. Reason: WSL/Windows environment complexity requires detailed path/dependency guidance.
+- **Sample Document:** Created complete test case (not just snippet). Reason: User can execute immediately without drafting content.
+
+### Success Criteria
+- ✅ User can verify prerequisites independently
+- ✅ User can execute first PDF generation without assistance
+- ✅ Troubleshooting guide addresses predictable errors (Pandoc, WeasyPrint, paths)
+- ✅ Sample document demonstrates all major pipeline features
+
+---
+
 ## [2025-11-30] Phase 8: Layout Helpers (Scribus + CSS)
 
 ### Overview

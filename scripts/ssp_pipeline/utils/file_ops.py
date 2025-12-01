@@ -80,8 +80,8 @@ def copy_to_published(source_path: Path, output_type: str, doc_id: str) -> Path:
     Raises:
         OSError: If copy fails
     """
-    # Determine published directory (published/pdf or published/web)
-    published_dir = source_path.parent.parent.parent / "published" / output_type
+    # Use CWD as base (repo root) instead of relative to source
+    published_dir = Path.cwd() / "published" / output_type
     ensure_dir(published_dir)
 
     # Copy with standardized naming
@@ -108,9 +108,9 @@ def archive_to_releases(source_path: Path, doc_type: str, doc_id: str, version: 
     Raises:
         OSError: If archive fails
     """
-    # Create timestamped release directory
+    # Create timestamped release directory (from repo root)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    releases_dir = source_path.parent.parent.parent / "releases" / doc_type
+    releases_dir = Path.cwd() / "releases" / doc_type
     release_subdir = releases_dir / f"{doc_id}_v{version}_{timestamp}"
     ensure_dir(release_subdir)
 

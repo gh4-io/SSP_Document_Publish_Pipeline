@@ -231,7 +231,7 @@ def parse_block(block_data: Dict[str, Any]) -> Optional[Block]:
     
     elif block_type == "Table":
         # Delegate to table parser
-        from parsers.tables import parse_table_element
+        from .tables import parse_table_element
         return parse_table_element(block_data)
     
     # Unsupported types: RawBlock, Div, etc.

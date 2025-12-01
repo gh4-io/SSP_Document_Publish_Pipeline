@@ -28,9 +28,9 @@ def validate_markdown(md_path: Path) -> bool:
     if not md_path.is_file():
         raise ValueError(f"Path is not a file: {md_path}")
 
-    # Read first 10 lines to check for YAML front matter markers
+    # Read first 50 lines to check for YAML front matter markers
     with md_path.open("r", encoding="utf-8") as f:
-        lines = [f.readline().strip() for _ in range(10)]
+        lines = [f.readline().strip() for _ in range(50)]
 
     # Front matter must start with "---" on first line
     if not lines or lines[0] != "---":
@@ -48,7 +48,7 @@ def validate_profile(profile: Dict[str, Any]) -> bool:
     Validate layout profile schema.
 
     Args:
-        profile: Parsed layout profile dictionary
+        profile: Parsed layout profile dictionary (inner dict, not wrapper)
 
     Returns:
         True if valid
@@ -56,26 +56,20 @@ def validate_profile(profile: Dict[str, Any]) -> bool:
     Raises:
         ValueError: If profile is missing required fields or invalid
     """
-    required_keys = ["layout_profile"]
-    for key in required_keys:
-        if key not in profile:
-            raise ValueError(f"Profile missing required key: {key}")
+    # Check required keys (rendering_engine is optional, defaults to weasyprint)
+    required_keys = ["resources", "styles_map"]
+    missing = [k for k in required_keys if k not in profile]
+    if missing:
+        raise ValueError(f"Profile missing required fields: {missing}")
 
-    layout = profile["layout_profile"]
-
-    # Check required sub-keys
-    required_subkeys = ["rendering_engine", "resources", "styles_map"]
-    for key in required_subkeys:
-        if key not in layout:
-            raise ValueError(f"Profile missing required field: layout_profile.{key}")
-
-    # Validate rendering engine value
-    valid_engines = ["weasyprint", "scribus"]
-    engine = layout["rendering_engine"]
-    if engine not in valid_engines:
-        raise ValueError(
-            f"Invalid rendering_engine: {engine}. Must be one of {valid_engines}"
-        )
+    # Validate rendering engine value if present
+    if "rendering_engine" in profile:
+        valid_engines = ["weasyprint", "scribus"]
+        engine = profile["rendering_engine"]
+        if engine not in valid_engines:
+            raise ValueError(
+                f"Invalid rendering_engine: {engine}. Must be one of {valid_engines}"
+            )
 
     return True
 
