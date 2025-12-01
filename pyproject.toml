@@ -6,4 +6,10 @@ description = "Document publishing pipeline for SOP/STD/REF/APP docs"
 authors = [{ name = "Jason Grace" }]
 
 [tool.uv]
-dev-dependencies = ["ruff", "pytest", "weasyprint", "pandoc"]
+dev-dependencies = [
+    "ruff",
+    "pytest",
+    "weasyprint",
+    "pandoc",
+    "watchdog>=6.0.0",
+]

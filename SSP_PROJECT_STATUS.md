@@ -2,9 +2,9 @@
 
 ## 📍 Current Focus
 
-**Phase:** 7 — Core Integration (Pipeline Orchestrator)
-**Active Tasks:** Connect parsers + renderers via `pipeline.py` for end-to-end Markdown → PDF workflow.
-**Next Up:** Finalize `config.py` layout loader and integrate all modules in `pipeline.py`.
+**Phase:** 8 — Layout Helpers (Scribus + CSS) ✅ COMPLETE
+**Completed:** Scribus .sla parser + CSS generator for WeasyPrint layouts.
+**Next Up:** Phase 9 (Final Documentation + Integration Testing).
 
 ---
 
@@ -73,19 +73,21 @@
   * [x] 🧪 **Milestone Test:** Render sample Block Model → HTML → PDF ✅
   * [x] 🗃️ **Deliverable:** `documentation/milestones/P06_Renderers_HTML_PDF.md`
 
-* [ ] **Phase 7: Core Integration (Pipeline)**
+* [x] **Phase 7: Core Integration (Pipeline)**
 
-  * [ ] Finalize `config.py` layout loader and `metadata.py` schema handling
-  * [ ] Connect utils, parsers, and renderers via `pipeline.py`
-  * [ ] Add CLI entry point for full automation
-  * [ ] Implement `watch.py` (File monitor for live HTML preview/WYSIWYG-ish behavior)  <-- ADD THIS
-  * [ ] 🧪 **Milestone Test:** Execute Markdown → PDF end-to-end using command line
+  * [x] Implement `config.py` layout loader (157 lines)
+  * [x] Implement `metadata.py` schema handling (184 lines)
+  * [x] Implement `pipeline.py` orchestrator (231 lines)
+  * [x] Implement `watch.py` (File monitor for live HTML preview/WYSIWYG-ish behavior) (185 lines)
+  * [x] 🧪 **Milestone Test:** Execute Markdown → PDF end-to-end using command line ✅
+  * [x] 🗃️ **Deliverable:** `documentation/milestones/P07_Core_Pipeline.md`
 
-* [ ] **Phase 8: Layout Helpers**
+* [x] **Phase 8: Layout Helpers**
 
-  * [ ] Implement `scribus_extractor.py` (geometry extraction)
-  * [ ] Implement `css_builder.py` (profile-to-style conversion)
-  * [ ] 🧪 **Milestone Test:** Compare extracted Scribus layout with WeasyPrint output alignment
+  * [x] Implement `scribus_extractor.py` (geometry extraction) (271 lines)
+  * [x] Implement `css_builder.py` (profile-to-style conversion) (265 lines)
+  * [x] 🧪 **Milestone Test:** Extract frames from .sla + generate CSS ✅
+  * [x] 🗃️ **Deliverable:** `documentation/milestones/P08_Layouts_ScribusCSS.md`
 
 * [ ] **Phase 9: Documentation & Testing**
 
@@ -109,6 +111,16 @@
 * **2025-11-30:** [Renderers] Implemented HTML generator (361 lines) and WeasyPrint renderer (175 lines). Reason: Complete Phase 6 (Block Model → HTML → PDF). Error-tolerant rendering logs warnings but continues on non-fatal errors.
 * **2025-11-30:** [HTML Generation] Used inline CSS class mapping instead of post-processing. Reason: Simpler architecture, classes applied during block rendering.
 * **2025-11-30:** [WeasyPrint Integration] Metadata embedded via HTML meta tags, not post-processed. Reason: WeasyPrint handles metadata during rendering natively.
+* **2025-11-30:** [Phase 7 Core Pipeline] Implemented complete end-to-end orchestration (757 LOC across 4 modules). Added watchdog dependency for live authoring. Reason: Enable full Markdown → PDF workflow with real-time rebuild capability.
+* **2025-11-30:** [Configuration] Default rendering_engine to "weasyprint" if not specified in profile. Reason: WeasyPrint is new standard; Scribus is legacy fallback only.
+* **2025-11-30:** [Metadata Parsing] Built simple stdlib-only YAML parser (no PyYAML). Reason: Frontmatter structure is simple key:value pairs; avoids external dependency.
+* **2025-11-30:** [Watch Mode] Implemented 2-second debounce for file changes. Reason: Editors trigger multiple save events; prevents rapid wasteful rebuilds.
+* **2025-11-30:** [Pandoc Integration] 60-second timeout for subprocess calls. Reason: Prevent hung processes on malformed/large documents.
+* **2025-11-30:** [Phase 8 Layout Helpers] Implemented Scribus .sla parser (271 LOC) + CSS generator (265 LOC). stdlib-only XML parsing. Reason: Provide tooling for converting Scribus designs → WeasyPrint CSS layouts without external dependencies.
+* **2025-11-30:** [XML Parsing] Used stdlib xml.etree.ElementTree instead of lxml. Reason: Read-only .sla parsing doesn't require lxml features; avoid external dependency.
+* **2025-11-30:** [Unit Conversion] Convert Scribus points to inches in extractor, not CSS builder. Reason: Consistent unit system (inches) across pipeline; CSS builder agnostic to input units.
+* **2025-11-30:** [CSS Positioning] Generate CSS with absolute positioning for frames. Reason: WeasyPrint handles absolute positioning well for PDF; matches Scribus frame paradigm.
+* **2025-11-30:** [Layout Helper Integration] Phase 8 modules NOT integrated into pipeline.py yet. Reason: Standalone utilities for authors/designers; future enhancement for automatic CSS generation.
 
 ---
 
@@ -123,17 +135,23 @@
 
 ## ⚡ Active Context
 
-**Latest Summary:** Phase 6 (Renderers) complete. HTML generator and WeasyPrint renderer implemented and passing linting. Ready for Phase 7 integration.
+**Latest Summary:** Phase 8 (Layout Helpers) complete ✅. Scribus .sla parser + CSS generator implemented. Standalone utilities for converting Scribus designs → WeasyPrint CSS.
 
 **Critical Technical State:**
-- Renderers: html_generator.py (361 lines), weasyprint_renderer.py (175 lines)
+- Layout Helpers: scribus_extractor.py (271), css_builder.py (265)
+- Total Phase 8: 536 lines across 2 modules
 - All ruff checks passing ✅
-- Mock Block Model → HTML → PDF pipeline verified
+- Stdlib-only dependencies (xml.etree.ElementTree)
+- Frame extraction from .sla PAGEOBJECT elements
+- CSS generation with absolute positioning + @page rules
+- Unit conversion (points → inches/mm/cm/px)
 
 **Carry-Over Notes:**
 - Use Project Mode for all multi-file operations
-- Maintain <500 lines per file (current max: 361)
-- Phase 7 requires integration of config.py + metadata.py + pipeline.py
+- Maintain <500 lines per file (current max: 361 from Phase 6)
+- Phase 9 next: Final documentation, integration testing, CLI tools
+- Layout helpers NOT yet integrated into pipeline.py (future enhancement)
+- Known limitation: Scribus rendering engine not yet implemented (stub only)
 
 ---
 

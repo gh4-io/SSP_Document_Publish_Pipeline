@@ -2,6 +2,200 @@
 
 All notable changes to the SSP Document Publishing Pipeline project.
 
+## [2025-11-30] Phase 8: Layout Helpers (Scribus + CSS)
+
+### Overview
+**Status:** ✅ Complete
+**Total:** 536 lines across 2 modules
+**Deliverable:** Scribus .sla parser + CSS generator for WeasyPrint layouts
+
+### Modules Implemented
+
+#### scribus_extractor.py (271 lines)
+**Purpose:** Extract frame geometry and styles from Scribus .sla XML files
+
+**Functions (6 total):**
+- `extract_frames()` - Parse all PAGEOBJECT elements from .sla file → frame dict
+- `parse_frame_geometry()` - Extract x, y, width, height from frame XML (points → inches)
+- `extract_master_pages()` - Extract master page definitions with frame associations
+- `get_frame_by_name()` - Lookup specific frame by ANNAME attribute
+- `extract_text_styles()` - Extract STYLE elements (font, size, color)
+- `validate_sla_file()` - Validate .sla XML structure (root element, DOCUMENT check)
+
+**Features:**
+- Stdlib XML parsing (xml.etree.ElementTree, no lxml dependency)
+- Point-to-inch conversion (1 inch = 72 points)
+- Font/fontsize extraction from StoryText/DefaultStyle elements
+- Frame type detection (PTYPE attribute: 4 = text frame)
+- Master page frame association via OwnPage/NUM attributes
+
+---
+
+#### css_builder.py (265 lines)
+**Purpose:** Generate CSS from Scribus frame data for WeasyPrint rendering
+
+**Functions (7 total):**
+- `build_layout_css()` - Generate complete CSS from frame dictionary
+- `generate_page_rules()` - Create @page rules (size: letter/a4/legal, margins)
+- `generate_frame_css()` - Create CSS for single frame with absolute positioning
+- `convert_points_to_units()` - Convert points → mm/cm/in/px/pt
+- `generate_text_styles_css()` - Generate text style classes from style dict
+- `merge_css_files()` - Combine multiple CSS files with source comments
+- `validate_css_syntax()` - Basic CSS validation (balanced braces check)
+
+**Features:**
+- Absolute positioning CSS from frame geometry (left, top, width, height)
+- @page rules for page size (letter: 8.5in×11in, a4: 210mm×297mm, legal: 8.5in×14in)
+- Frame class naming sanitization (.frame-title-main from "TitleMain")
+- Font-family and font-size CSS properties
+- Multi-unit conversion support (in, mm, cm, px, pt)
+- CSS file merging with source tracking comments
+
+---
+
+### Code Quality
+- Total: 536 lines (271 + 265)
+- Per-file max: 271 lines (well under 500-line limit)
+- Type hints: 100% coverage
+- Docstrings: All functions documented
+- Linting: ✅ All ruff checks passing
+- Dependencies: stdlib only (xml.etree.ElementTree, logging, pathlib)
+
+### Testing
+- Frame extraction from DTS_Master_Report_Template.sla verified
+- CSS generation with @page rules + absolute positioning tested
+- Unit conversion (points → inches) validated
+- Milestone doc: `documentation/milestones/P08_Layouts_ScribusCSS.md`
+
+### Architectural Decisions
+- **XML Parser:** Used stdlib xml.etree.ElementTree instead of lxml (read-only parsing, no external dep)
+- **Unit System:** Convert points → inches in extractor, not CSS builder (consistent pipeline units)
+- **CSS Positioning:** Absolute positioning for frames (WeasyPrint PDF paradigm, matches Scribus)
+- **Class Naming:** Sanitize frame names for CSS (.frame-downstream-apn-main)
+- **Validation:** Basic CSS validation only (balanced braces; full validation requires external lib)
+
+### Integration Status
+- **NOT integrated into pipeline.py yet** (standalone utilities for authors/designers)
+- Future enhancement: Automatic CSS generation from .sla on profile load
+- Use case: Converting existing Scribus designs → WeasyPrint CSS templates
+
+---
+
+## [2025-11-30] Phase 7: Core Pipeline Integration
+
+### Overview
+**Status:** ✅ Complete
+**Total:** 757 lines across 4 modules
+**Deliverable:** End-to-end Markdown → PDF workflow operational + live watch mode
+
+### Modules Implemented
+
+#### config.py (157 lines)
+**Purpose:** Configuration loading and rendering engine selection
+
+**Functions (4 total):**
+- `load_layout_profile()` - Load and validate JSON profile with schema checks
+- `get_rendering_engine()` - Extract rendering engine (default: weasyprint)
+- `get_resource_paths()` - Resolve resource paths relative to project root
+- `get_styles_map()` - Extract Pandoc → CSS styles mapping
+
+**Features:**
+- JSON profile loading with validation
+- Support for WeasyPrint and Scribus engines
+- Backward compatibility with DocBook-style profiles
+- Automatic path resolution
+
+---
+
+#### metadata.py (184 lines)
+**Purpose:** YAML frontmatter parsing and metadata normalization
+
+**Functions (5 total):**
+- `parse_frontmatter()` - Extract YAML between --- markers
+- `normalize_metadata()` - Normalize field names and validate
+- `extract_document_id()` - Validate document ID format (TYPE-NNN)
+- `get_required_fields()` - Return required metadata fields list
+- `merge_with_defaults()` - Merge user metadata with defaults
+
+**Features:**
+- Simple stdlib-only YAML parser (key:value pairs)
+- Field name normalization (doc_id → document_id, etc.)
+- Document ID validation (SOP-200, STD-105, etc.)
+- Auto-generate timestamp (generated_at)
+- Required fields: document_id, title, revision, author
+
+---
+
+#### pipeline.py (231 lines)
+**Purpose:** Main workflow orchestration (Markdown → PDF)
+
+**Functions (4 total):**
+- `run_pipeline()` - Execute 9-step publishing workflow
+- `generate_pandoc_ast()` - Call Pandoc subprocess for JSON generation
+- `cleanup_temp_files()` - Clean up temporary AST files
+- `get_pipeline_version()` - Return version (4.0.0)
+
+**9-Step Workflow:**
+1. Load layout profile
+2. Validate inputs
+3. Parse Markdown frontmatter
+4. Generate Pandoc JSON AST (subprocess)
+5. Parse AST to block model
+6. Generate HTML with CSS classes
+7. Render to PDF (WeasyPrint/Scribus)
+8. Copy to published/
+9. Archive to releases/ with timestamp
+
+**Features:**
+- Full end-to-end automation
+- Detailed step-by-step logging
+- Pandoc subprocess integration with 60s timeout
+- Automatic directory creation
+- Document categorization (SOP, STD, REF, APP)
+- Temp file cleanup
+
+---
+
+#### watch.py (185 lines)
+**Purpose:** File monitor for live authoring (WYSIWYG-ish behavior)
+
+**Functions/Classes (3 total):**
+- `MarkdownChangeHandler` (class) - Watchdog file event handler
+- `watch_markdown()` - Monitor file and auto-rebuild on changes
+- `main()` - CLI entry point
+
+**Features:**
+- Real-time file monitoring using watchdog
+- 2-second debounce (prevents rapid re-triggers)
+- Initial build on watch start
+- Error-tolerant (failures don't crash watcher)
+- Keyboard interrupt handling (Ctrl+C)
+- Rebuild status indicators (✅ success / ❌ failure)
+
+---
+
+### Code Quality
+- All modules < 500 lines (max: 231)
+- Type hints: 100% coverage
+- Docstrings: All functions documented
+- Linting: ✅ All ruff checks passing
+- Dependencies: stdlib + weasyprint + watchdog
+
+### Testing
+- End-to-end pipeline tested (9-step workflow)
+- Pandoc subprocess integration verified
+- Watch mode debounce tested
+- Milestone doc: `documentation/milestones/P07_Core_Pipeline.md`
+
+### Architectural Decisions
+- **Default engine:** WeasyPrint if rendering_engine not specified (Scribus is legacy fallback)
+- **YAML parser:** Simple stdlib-only implementation (no PyYAML) for flat key:value pairs
+- **Temp files:** /tmp/ for Pandoc AST JSON (cleaned after pipeline run)
+- **Debounce:** 2-second minimum between rebuilds (editors trigger multiple saves)
+- **Timeout:** 60-second hard limit for Pandoc subprocess calls
+
+---
+
 ## [2025-11-30] Phase 6: Renderers (HTML + PDF)
 
 ### html_generator.py (361 lines)
@@ -199,15 +393,21 @@ All notable changes to the SSP Document Publishing Pipeline project.
 **Completed:**
 - ✅ Project scaffold and architecture
 - ✅ Complete documentation and docstrings
-- ✅ Utils layer (logging, file ops, validators)
+- ✅ Utils layer (logging, file ops, validators) - 351 LOC
+- ✅ Parsers (Pandoc AST, callouts, images, tables, wikilinks) - ~570 LOC
+- ✅ Renderers (HTML generation, WeasyPrint rendering) - 536 LOC
+- ✅ Core Pipeline (config, metadata, pipeline, watch) - 757 LOC
+- ✅ Layout Helpers (scribus_extractor, css_builder) - 536 LOC
 
-**In Progress:**
-- 🔄 Core modules (config, metadata, pipeline)
-- 🔄 Parsers (Pandoc AST, callouts, images, tables, wikilinks)
-- 🔄 Renderers (HTML generation, WeasyPrint rendering)
-- 🔄 Layouts (Scribus extraction, CSS building)
+**Current Status:**
+- ✅ End-to-end Markdown → PDF workflow operational
+- ✅ Live watch mode for authoring (watchdog integration)
+- ✅ Pandoc subprocess integration with timeout
+- ✅ Full 9-step pipeline automation
+- ✅ Scribus .sla parser + CSS generator (standalone utilities)
 
-**Planned:**
+**Planned (Phase 9+):**
+- ⏳ Final documentation (Technical Design, Authoring Guide)
 - ⏳ Integration testing
-- ⏳ End-to-end pipeline testing
+- ⏳ CLI tools for layout conversion
 - ⏳ Documentation examples

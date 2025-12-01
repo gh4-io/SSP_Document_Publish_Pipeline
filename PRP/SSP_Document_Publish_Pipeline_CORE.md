@@ -14,7 +14,7 @@ Scribus remains a **visual layout designer only** for master pages and CSS extra
 
 ### Benefits
 - ✅ 100% Markdown fidelity (callouts, wikilinks, images, code, tables)
-- ✅ VSCode-quality PDF output (GitHub Markdown + layout CSS)
+- ✅ Obsidian-quality PDF output (Visual parity with Obsidian's "Live Preview" styling) (GitHub Markdown + layout CSS)
 - ✅ 5× faster rendering, human-readable JSON AST
 - ✅ Easier maintenance + debugging
 - ✅ Future-proof (pure web stack)
@@ -132,6 +132,10 @@ Key rules:
 - **Editor:** Obsidian (Live Preview mode recommended).
 - **Compatibility:** The pipeline natively supports Obsidian-flavored syntax (Callouts, Wikilinks, Image embedding).
 - **Validation:** Authors should use the "Watch Mode" (see Section 10) to verify layout compliance, as the editor view is for content structure only, not final print layout.
+
+### 6.2 Visual Style Strategy
+- **Goal:** The PDF output must visually resemble the Obsidian editor view ("WYSIWYG-ish").
+- **Implementation:** The `html_generator` must map Pandoc blocks to HTML classes that match Obsidian's DOM structure (e.g., `.callout`, `.markdown-rendered table`) to allow reuse of Obsidian CSS themes.
 
 ---
 
