@@ -1,0 +1,28 @@
+{
+  "layout_profile": {
+    "name": "Default WeasyPrint Layout",
+    "rendering_engine": "weasyprint",
+    "resources": {
+      "css_template": "templates/styles/default_layout.css",
+      "markdown_theme": "templates/styles/default_theme.css",
+      "pdf_directory": "published/pdf",
+      "web_directory": "published/web"
+    },
+    "styles_map": {
+      "heading1": "doc-title",
+      "heading2": "section-heading",
+      "heading3": "subsection-heading",
+      "heading4": "subsubsection-heading",
+      "heading5": "paragraph-heading",
+      "heading6": "minor-heading",
+      "paragraph": "body-text",
+      "list": "list-item",
+      "table": "data-table",
+      "code": "code-block",
+      "callout_warning": "callout-warning",
+      "callout_note": "callout-note",
+      "callout_danger": "callout-danger",
+      "callout_tip": "callout-tip"
+    }
+  }
+}

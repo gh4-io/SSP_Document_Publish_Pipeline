@@ -183,34 +183,32 @@ def parse_block(block_data: Dict[str, Any]) -> Optional[Block]:
         return Paragraph(content=text)
     
     elif block_type == "BulletList":
-        # Structure: [[[blocks]], [[blocks]], ...]
-        # Note: Each item is wrapped in an extra list
+        # Structure: [ [{block}, {block}], [{block}], ... ]
+        # Each item is a list of blocks (Para, Plain, etc.)
         items = []
-        for item_wrapper in block_content:
-            # item_wrapper is a list containing blocks
+        for item_blocks in block_content:
             item_text_parts = []
-            # Flatten the wrapper if it exists
-            item_blocks = item_wrapper[0] if item_wrapper and isinstance(item_wrapper[0], list) else item_wrapper
             for item_block in item_blocks:
-                if isinstance(item_block, dict) and item_block.get("t") == "Para":
-                    item_text_parts.append(extract_inline_text(item_block["c"]))
+                if isinstance(item_block, dict):
+                    block_t = item_block.get("t", "")
+                    if block_t in ("Para", "Plain"):
+                        item_text_parts.append(extract_inline_text(item_block["c"]))
             items.append(" ".join(item_text_parts))
         return ListBlock(list_type="unordered", items=items)
     
     elif block_type == "OrderedList":
-        # Structure: [[start_num, style, delim], [[[blocks]], [[blocks]], ...]]
-        # Note: Each item is wrapped in an extra list
+        # Structure: [[start_num, style, delim], [ [{block}], [{block}], ... ]]
         list_attrs = block_content[0]
         start_number = list_attrs[0]
-        item_wrappers_list = block_content[1]
+        item_list = block_content[1]
         items = []
-        for item_wrapper in item_wrappers_list:
+        for item_blocks in item_list:
             item_text_parts = []
-            # Flatten the wrapper if it exists
-            item_blocks = item_wrapper[0] if item_wrapper and isinstance(item_wrapper[0], list) else item_wrapper
             for item_block in item_blocks:
-                if isinstance(item_block, dict) and item_block.get("t") == "Para":
-                    item_text_parts.append(extract_inline_text(item_block["c"]))
+                if isinstance(item_block, dict):
+                    block_t = item_block.get("t", "")
+                    if block_t in ("Para", "Plain"):
+                        item_text_parts.append(extract_inline_text(item_block["c"]))
             items.append(" ".join(item_text_parts))
         return ListBlock(list_type="ordered", items=items, start_number=start_number)
     

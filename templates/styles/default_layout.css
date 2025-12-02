@@ -1,0 +1,36 @@
+/* Default Page Layout for WeasyPrint */
+
+@page {
+    size: letter;
+    margin: 1in 0.75in;
+
+    @top-center {
+        content: string(doctitle);
+        font-size: 9pt;
+        color: #666;
+    }
+
+    @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-size: 9pt;
+        color: #666;
+    }
+}
+
+body {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000;
+}
+
+.metadata-frame {
+    border-bottom: 2px solid #333;
+    margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    font-size: 10pt;
+}
+
+.document-body {
+    margin-top: 1em;
+}

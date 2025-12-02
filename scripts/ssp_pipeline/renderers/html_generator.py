@@ -117,9 +117,9 @@ def render_heading(heading: Heading, styles_map: Dict[str, Any]) -> str:
     Returns:
         HTML heading tag with appropriate class
     """
-    # Get CSS class from styles_map
-    heading_styles = styles_map.get("pandoc", {}).get("heading", {})
-    css_class = heading_styles.get(str(heading.level), f"Heading{heading.level}")
+    # Get CSS class from styles_map (support both pandoc and docbook)
+    heading_key = f"heading{heading.level}"
+    css_class = styles_map.get(heading_key, f"Heading{heading.level}")
 
     # Escape text content
     text = html_lib.escape(heading.text)
@@ -141,7 +141,7 @@ def render_paragraph(para: Paragraph, styles_map: Dict[str, Any]) -> str:
         HTML paragraph tag with class
     """
     # Get CSS class from styles_map
-    para_class = styles_map.get("pandoc", {}).get("paragraph", "BodyText")
+    para_class = styles_map.get("paragraph", "BodyText")
 
     # Escape content
     content = html_lib.escape(para.content)
