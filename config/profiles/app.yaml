@@ -1,0 +1,22 @@
+# APP (Appendix) Profile
+# Overrides and extensions to default.yaml for APP documents
+
+pipeline:
+  validation:
+    schema: app_metadata.json
+    required_fields:
+      - document_id
+      - title
+      - category
+      - revision
+      - date_effective
+      - author
+      - status
+
+  output:
+    html:
+      template: app.html.j2
+
+document:
+  category: APP
+  id_pattern: "^APP-[0-9]{3,4}$"

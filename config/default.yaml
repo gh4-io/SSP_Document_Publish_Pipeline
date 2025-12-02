@@ -1,0 +1,143 @@
+# Default configuration for SSP Document Automation Pipeline
+# This file defines system-wide defaults that apply to all document families
+# Override these settings in profiles/<family>.yaml or config/local.yaml
+
+# Pipeline configuration
+pipeline:
+  # Pandoc settings
+  pandoc:
+    executable: /usr/bin/pandoc
+    filters:
+      - filters/callouts.lua
+      - filters/wikilinks.lua
+      - filters/directives.lua
+      - filters/pagebreak.lua
+    options:
+      - --standalone
+      - --toc
+      - --toc-depth=3
+      - -f
+      - markdown+yaml_metadata_block
+      - -t
+      - json
+
+  # Validation settings
+  validation:
+    strict: true
+    schema_dir: schemas
+    required_fields:
+      - document_id
+      - title
+      - category
+      - revision
+      - date_effective
+      - author
+      - approver
+      - status
+    validate_cross_references: true
+    validate_status_transitions: true
+
+  # Image processing settings
+  images:
+    master_dir: assets/images/master
+    print_dir: assets/images/print
+    web_dir: assets/images/web
+    registry_dir: assets/xml/metadata
+
+    # Print output settings (300 DPI for PDF)
+    print:
+      format: PNG
+      dpi: 300
+      optimize: true
+      quality: null  # PNG is lossless
+
+    # Web output settings (WebP for responsive)
+    web:
+      format: WEBP
+      quality: 85
+      method: 6  # compression method (0-6, higher = better compression)
+      sizes:
+        - 640   # Mobile
+        - 1024  # Tablet
+        - 1920  # Desktop
+      thumbnail_size: 200
+      thumbnail_quality: 75
+
+    # Image resampling filter
+    resampling: LANCZOS  # Best quality for downscaling
+
+  # Output configuration
+  output:
+    # PDF output settings
+    pdf:
+      engine: weasyprint  # Options: weasyprint, pagedjs, scribus (deprecated)
+      css: styles/pdf.css
+      directory: published/pdf
+      embed_metadata: true
+
+    # HTML output settings
+    html:
+      css: styles/web.css
+      directory: published/web
+      template_dir: templates/html
+      responsive: true
+
+  # Batch processing settings
+  batch:
+    max_workers: null  # null = CPU count, or specify integer
+    incremental: true
+    cache_file: .build_cache.json
+    transaction_backup_dir: .build_backup
+
+  # Release packaging settings
+  release:
+    directory: releases
+    include_source: true
+    include_xml: true
+    include_pdf: true
+    include_html: true
+    include_images: true
+    include_metadata: true
+    timestamp_format: "%Y%m%d_%H%M%S"
+
+# Document family defaults
+# These apply to all families unless overridden in profiles
+document:
+  default_status: Draft
+  default_revision: 0
+  statuses:
+    - Draft
+    - Review
+    - Active
+    - Retired
+
+# Logging configuration
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  console: true
+  file: true
+  file_dir: logs
+  rotation: daily
+  retention_days: 30
+  format: "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+  date_format: "%Y-%m-%d %H:%M:%S"
+
+# Feature flags (enable/disable features)
+features:
+  use_weasyprint: true
+  use_new_validator: true
+  generate_web_output: true
+  enable_batch_mode: true
+  enable_dependency_tracking: true
+  enable_build_transactions: true
+
+# Paths (relative to project root)
+paths:
+  drafts: drafts
+  templates: templates
+  assets: assets
+  published: published
+  releases: releases
+  schemas: schemas
+  filters: filters
+  styles: styles

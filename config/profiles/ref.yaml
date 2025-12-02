@@ -1,0 +1,22 @@
+# REF (Reference) Profile
+# Overrides and extensions to default.yaml for REF documents
+
+pipeline:
+  validation:
+    schema: ref_metadata.json
+    required_fields:
+      - document_id
+      - title
+      - category
+      - revision
+      - date_effective
+      - author
+      - status
+
+  output:
+    html:
+      template: ref.html.j2
+
+document:
+  category: REF
+  id_pattern: "^REF-[0-9]{3,4}$"

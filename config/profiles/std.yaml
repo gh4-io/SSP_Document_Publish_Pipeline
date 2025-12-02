@@ -1,0 +1,23 @@
+# STD (Standards) Profile
+# Overrides and extensions to default.yaml for STD documents
+
+pipeline:
+  validation:
+    schema: std_metadata.json
+    required_fields:
+      - document_id
+      - title
+      - category
+      - revision
+      - date_effective
+      - author
+      - approver
+      - status
+
+  output:
+    html:
+      template: std.html.j2
+
+document:
+  category: STD
+  id_pattern: "^STD-[0-9]{3,4}$"

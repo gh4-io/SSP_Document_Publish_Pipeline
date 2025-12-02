@@ -1,0 +1,50 @@
+{
+  "REF-2201": {
+    "document_id": "REF-2201",
+    "file_path": "drafts/REF-2201_Workpackage_Configuration.md",
+    "file_name": "REF-2201_Workpackage_Configuration.md",
+    "file_hash": "d4a1aa9a3d8214fd2751f6ea3943c9cc255d4b08b82274d199dd6f9463bf4b8e",
+    "title": "",
+    "status": "Draft",
+    "revision": "1.0",
+    "owner": "Jason Grace",
+    "approver": null,
+    "effective_date": null,
+    "upstream_apn": [],
+    "downstream_apn": [],
+    "family": "REF",
+    "last_scanned": "2025-12-02T06:14:52.752618"
+  },
+  "SOP-200": {
+    "document_id": "SOP-200",
+    "file_path": "drafts/SOP-200_Create_Workackage_Sequencing_Type.md",
+    "file_name": "SOP-200_Create_Workackage_Sequencing_Type.md",
+    "file_hash": "aa24d59e96989d94e60eea21fb218e4201f1741c05e6b52e9f0daa7b6ae15751",
+    "title": "Create Workackage Sequencing Type",
+    "status": "Draft",
+    "revision": 0,
+    "owner": "Jason Grace",
+    "approver": null,
+    "effective_date": null,
+    "upstream_apn": [],
+    "downstream_apn": [],
+    "family": "SOP",
+    "last_scanned": "2025-12-02T06:14:52.756403"
+  },
+  "STD-001": {
+    "document_id": "STD-001",
+    "file_path": "drafts/STD-001_Naming_Conventions.md",
+    "file_name": "STD-001_Naming_Conventions.md",
+    "file_hash": "423e68bd4e679a19032030b83ece03c0b76653bd631d44e052915ca90708012a",
+    "title": "DTS NAMING CONVENTIONS AND FILE STRUCTURE STANDARDS",
+    "status": "Draft",
+    "revision": 0,
+    "owner": "",
+    "approver": "Michael Osterhout",
+    "effective_date": "",
+    "upstream_apn": [],
+    "downstream_apn": [],
+    "family": "STD",
+    "last_scanned": "2025-12-02T06:14:52.759948"
+  }
+}

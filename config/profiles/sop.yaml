@@ -1,0 +1,26 @@
+# SOP (Standard Operating Procedure) Profile
+# Overrides and extensions to default.yaml for SOP documents
+
+pipeline:
+  validation:
+    schema: sop_metadata.json
+    required_fields:
+      - document_id
+      - title
+      - category
+      - revision
+      - date_effective
+      - author
+      - approver
+      - status
+      - department
+      - owner
+
+  output:
+    html:
+      template: sop.html.j2
+
+document:
+  category: SOP
+  id_pattern: "^SOP-[0-9]{3,4}$"
+  default_department: "Maintenance Operations"
