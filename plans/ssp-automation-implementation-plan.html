@@ -1,0 +1,2812 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ssp-automation-implementation-plan.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="ssp-document-automation---implementation-plan">SSP Document Automation - Implementation Plan</h1>
+<h2 id="executive-summary">Executive Summary</h2>
+<p><strong>Purpose</strong>: Transform SSP document pipeline from manual Scribus-based workflow to automated, flexible Markdown → HTML/PDF system.</p>
+<p><strong>Current State</strong>:</p>
+<ul>
+<li>Manual Scribus PDF generation (10-15s per doc, brittle)</li>
+<li>No web output</li>
+<li>No metadata validation</li>
+<li>Manual image optimization</li>
+<li>No batch processing</li>
+</ul>
+<p><strong>Target State</strong>:</p>
+<ul>
+<li>Automated pipeline: Markdown → Pandoc → HTML/PDF</li>
+<li>Web + PDF outputs from single source</li>
+<li>Schema-validated metadata</li>
+<li>Auto-generated image variants (print/web)</li>
+<li>Batch processing w/ dependency tracking</li>
+<li>10-15x faster PDF generation (WeasyPrint)</li>
+</ul>
+<p><strong>Implementation Timeline</strong>: 6 phases over ~3-4 months</p>
+<hr>
+<h2 id="1-architecture-overview">1. Architecture Overview</h2>
+<h3 id="11-high-level-component-diagram">1.1 High-Level Component Diagram</h3>
+<pre class="hljs"><code><div>┌─────────────────────────────────────────────────────────────┐
+│                    MARKDOWN SOURCE                          │
+│                (YAML front matter + content)                │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ├─→ [Metadata Validator] (jsonschema)
+                     │   • Schema validation
+                     │   • Cross-reference checks
+                     │   • Status transition validation
+                     │
+                     ├─→ [Image Processor] (Pillow)
+                     │   • Generate print variants (300 DPI PNG)
+                     │   • Generate web variants (WebP multi-res)
+                     │   • Create image registry
+                     │
+                     ↓
+         ┌──────────────────────────────┐
+         │   PANDOC JSON AST            │
+         │   (via Lua filters)          │
+         │   • Callouts                 │
+         │   • Wikilinks                │
+         │   • Custom directives        │
+         └──────────┬───────────────────┘
+                    │
+         ┌──────────┴──────────┐
+         │                     │
+         ↓                     ↓
+    [HTML Builder]        [HTML Builder]
+    (Jinja2)              (Jinja2)
+         │                     │
+         ↓                     ↓
+    HTML + CSS            HTML + CSS
+    (Web)                 (PDF-optimized)
+         │                     │
+         ↓                     ↓
+    Web Output            [WeasyPrint]
+    (Responsive)              │
+         │                     ↓
+         │                 PDF Output
+         │                     │
+         └─────────┬───────────┘
+                   │
+                   ↓
+           [Release Packager]
+           • Timestamped archives
+           • Source + outputs
+           • Metadata registry
+</div></code></pre>
+<h3 id="12-technology-stack">1.2 Technology Stack</h3>
+<p><strong>Core Technologies</strong>:</p>
+<ul>
+<li><strong>Pandoc</strong> 3.6+: Markdown → JSON AST conversion</li>
+<li><strong>Lua filters</strong>: Custom transformations (callouts, wikilinks, directives)</li>
+<li><strong>Jinja2</strong>: HTML template rendering</li>
+<li><strong>WeasyPrint</strong>: HTML → PDF rendering (10-15x faster than Scribus)</li>
+<li><strong>Pillow / Pillow-SIMD</strong>: Image processing</li>
+<li><strong>jsonschema</strong>: YAML metadata validation</li>
+</ul>
+<p><strong>Supporting Libraries</strong>:</p>
+<ul>
+<li><strong>PyYAML</strong>: YAML parsing</li>
+<li><strong>Click</strong>: CLI interface</li>
+<li><strong>Pygments</strong>: Code syntax highlighting</li>
+<li><strong>tqdm</strong>: Progress bars</li>
+</ul>
+<p><strong>Asset Formats</strong>:</p>
+<ul>
+<li>Print images: PNG @ 300 DPI</li>
+<li>Web images: WebP (640w, 1024w, 1920w)</li>
+<li>Fonts: WOFF2 (web), TTF (PDF)</li>
+</ul>
+<h3 id="13-data-flow">1.3 Data Flow</h3>
+<pre class="hljs"><code><div>INPUT: drafts/SOP-001.md
+    ↓
+1. Validate metadata (schemas/sop_metadata.json)
+2. Process images (assets/images/master/ → print/web/)
+3. Pandoc conversion (Markdown → JSON AST)
+4. Apply Lua filters (callouts, wikilinks, directives)
+5. Render HTML (templates/html/sop.html.j2)
+6. Generate outputs:
+   • Web: published/web/SOP-001.html
+   • PDF: WeasyPrint → published/pdf/SOP-001.pdf
+7. Package release (if status=Active)
+    ↓
+OUTPUT: HTML + PDF + release archive
+</div></code></pre>
+<h3 id="14-integration-with-existing-system">1.4 Integration with Existing System</h3>
+<p><strong>Preserved Components</strong>:</p>
+<ul>
+<li>✅ YAML front-matter metadata schema</li>
+<li>✅ Directory structure (<code>drafts/</code>, <code>assets/</code>, <code>published/</code>, <code>releases/</code>)</li>
+<li>✅ Document state logic (Draft/Review/Active/Retired)</li>
+<li>✅ Revision numbering system</li>
+<li>✅ Release packaging pattern</li>
+</ul>
+<p><strong>Replaced Components</strong>:</p>
+<ul>
+<li>❌ DocBook XML intermediate format → Pandoc JSON AST</li>
+<li>❌ Scribus PDF generation → WeasyPrint</li>
+<li>❌ Manual image optimization → Automated variants</li>
+</ul>
+<p><strong>New Components</strong>:</p>
+<ul>
+<li>✨ Metadata validation (pre-pipeline)</li>
+<li>✨ Web HTML output</li>
+<li>✨ Batch processing w/ dependency tracking</li>
+<li>✨ Image directive expansion</li>
+</ul>
+<hr>
+<h2 id="2-phase-breakdown">2. Phase Breakdown</h2>
+<h3 id="phase-1-foundation--validation">Phase 1: Foundation &amp; Validation</h3>
+<p><strong>Objective</strong>: Establish core infrastructure for validation, config management, error handling.</p>
+<p><strong>Dependencies</strong>: None (foundational phase)</p>
+<p><strong>Tasks</strong>:</p>
+<h4 id="11-create-configuration-system">1.1 Create Configuration System</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./config/default.yaml</code> - System defaults</li>
+<li><code>./config/profiles/sop.yaml</code> - SOP-specific config</li>
+<li><code>./config/profiles/std.yaml</code> - STD-specific config</li>
+<li><code>./config/profiles/ref.yaml</code> - REF-specific config</li>
+<li><code>./config/profiles/app.yaml</code> - APP-specific config</li>
+<li><code>./scripts/core/config.py</code> - Config loader class</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement hierarchical config loader (default → profile → local)</li>
+<li>Support dot-notation access (<code>config.get('pipeline.pandoc.executable')</code>)</li>
+<li>Deep merge for config overrides</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Centralized config prevents hard-coded paths/settings; enables per-family customization.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 -c <span class="hljs-string">"from scripts.core.config import Config; c = Config('sop'); print(c.get('pipeline.pandoc.executable'))"</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="12-implement-metadata-validation">1.2 Implement Metadata Validation</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./schemas/sop_metadata.json</code> - JSON Schema for SOP metadata</li>
+<li><code>./schemas/std_metadata.json</code> - JSON Schema for STD metadata</li>
+<li><code>./schemas/ref_metadata.json</code> - JSON Schema for REF metadata</li>
+<li><code>./schemas/app_metadata.json</code> - JSON Schema for APP metadata</li>
+<li><code>./scripts/validators/metadata_validator.py</code> - Validation logic</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Define JSON schemas for all document families</li>
+<li>Implement <code>validate_metadata()</code> function (returns bool, errors list)</li>
+<li>Implement <code>validate_cross_references()</code> for APN validation</li>
+<li>Implement <code>validate_status_transition()</code> for revision rules</li>
+<li>Create <code>ValidationReport</code> class for structured error reporting</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Fast-fail validation prevents invalid docs from entering pipeline; clear error messages aid authoring.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 -c <span class="hljs-string">"from scripts.validators.metadata_validator import validate_metadata; \
+print(validate_metadata('drafts/SOP-200_Create_Workackage_Sequencing_Type.md', 'schemas/sop_metadata.json'))"</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="13-setup-logging--error-handling">1.3 Setup Logging &amp; Error Handling</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/core/logging_config.py</code> - Centralized logging setup</li>
+<li><code>./logs/.gitkeep</code> - Ensure logs directory exists</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Configure Python logging (file + console)</li>
+<li>Implement structured log format: <code>timestamp [level] module: message</code></li>
+<li>Create log rotation (daily, keep 30 days)</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Consistent logging aids debugging; file logs preserve build history.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 -c <span class="hljs-string">"from scripts.core.logging_config import setup_logging; \
+import logging; setup_logging(); logging.info('Test log')"</span>
+ls -l logs/
+</div></code></pre>
+</li>
+</ul>
+<h4 id="14-document-registry--dependency-tracking">1.4 Document Registry &amp; Dependency Tracking</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/core/registry.py</code> - Document registry builder</li>
+<li><code>./document_registry.json</code> - Auto-generated list of all doc IDs</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Scan <code>drafts/</code> directory for all Markdown files</li>
+<li>Extract document_id from YAML front matter</li>
+<li>Build registry: <code>{doc_id: {path, status, revision, ...}}</code></li>
+<li>Regenerate on each build</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Registry enables cross-reference validation; single source of truth for all docs.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 scripts/core/registry.py
+cat document_registry.json | jq <span class="hljs-string">'.["SOP-200"]'</span>
+</div></code></pre>
+</li>
+</ul>
+<p><strong>Phase 1 Deliverables</strong>:</p>
+<ul>
+<li>✅ Hierarchical configuration system</li>
+<li>✅ JSON schema-based metadata validation</li>
+<li>✅ Structured logging infrastructure</li>
+<li>✅ Auto-generated document registry</li>
+</ul>
+<p><strong>Verification Criteria</strong>:</p>
+<ul>
+<li>Config loads without errors; overrides work correctly</li>
+<li>Invalid metadata triggers clear error messages</li>
+<li>Logs written to both console and file</li>
+<li>Registry contains all documents in drafts/</li>
+</ul>
+<hr>
+<h3 id="phase-2-asset-pipeline">Phase 2: Asset Pipeline</h3>
+<p><strong>Objective</strong>: Automated image variant generation for print/web outputs.</p>
+<p><strong>Dependencies</strong>: Phase 1 (config system)</p>
+<p><strong>Tasks</strong>:</p>
+<h4 id="21-image-variant-generator">2.1 Image Variant Generator</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/processors/image_processor.py</code> - Core image processing</li>
+<li><code>./assets/images/master/.gitkeep</code> - Master images directory</li>
+<li><code>./assets/images/print/.gitkeep</code> - Print variants directory</li>
+<li><code>./assets/images/web/.gitkeep</code> - Web variants directory</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement <code>generate_image_variants()</code>:
+<ul>
+<li>Input: Master image path</li>
+<li>Outputs:
+<ul>
+<li>Print: 300 DPI PNG</li>
+<li>Web: WebP @ 640w, 1024w, 1920w</li>
+<li>Thumbnail: WebP @ 200px</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Use Pillow with Lanczos resampling</li>
+<li>Preserve aspect ratio</li>
+<li>Optimize for file size (WebP quality=85)</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Eliminates manual image prep; consistent quality across outputs.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Place test image in assets/images/master/doc/SOP-001/test.png</span>
+python3 scripts/processors/image_processor.py SOP-001
+ls -lh assets/images/<span class="hljs-built_in">print</span>/SOP-001/
+ls -lh assets/images/web/SOP-001/
+</div></code></pre>
+</li>
+</ul>
+<h4 id="22-image-registry--metadata">2.2 Image Registry &amp; Metadata</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./assets/xml/metadata/.gitkeep</code> - Metadata directory</li>
+<li>Extend <code>./scripts/processors/image_processor.py</code> for registry generation</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Generate JSON registry per document: <code>{doc_id}_images.json</code></li>
+<li>Schema:<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"SOP-001_valve_assembly"</span>: {
+    <span class="hljs-attr">"master"</span>: <span class="hljs-string">"path/to/master.png"</span>,
+    <span class="hljs-attr">"print"</span>: <span class="hljs-string">"path/to/print.png"</span>,
+    <span class="hljs-attr">"web"</span>: {
+      <span class="hljs-attr">"640"</span>: <span class="hljs-string">"path/to/640.webp"</span>,
+      <span class="hljs-attr">"1024"</span>: <span class="hljs-string">"path/to/1024.webp"</span>,
+      <span class="hljs-attr">"1920"</span>: <span class="hljs-string">"path/to/1920.webp"</span>
+    },
+    <span class="hljs-attr">"alt_text"</span>: <span class="hljs-string">"Extracted from Markdown"</span>,
+    <span class="hljs-attr">"caption"</span>: <span class="hljs-string">"Extracted from directive"</span>,
+    <span class="hljs-attr">"dimensions"</span>: {<span class="hljs-attr">"width"</span>: <span class="hljs-number">4000</span>, <span class="hljs-attr">"height"</span>: <span class="hljs-number">3000</span>}
+  }
+}
+</div></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Registry enables HTML template lookups; metadata aids accessibility.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>cat assets/xml/metadata/SOP-001_images.json | jq <span class="hljs-string">'.'</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="23-image-format-decision-logic">2.3 Image Format Decision Logic</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li>Extend <code>./scripts/processors/image_processor.py</code> with format selector</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement <code>select_image_format(use_case, has_transparency, is_photo)</code></li>
+<li>Decision tree:
+<ul>
+<li>Print → PNG (300 DPI, lossless)</li>
+<li>Web → WebP (85 quality, lossy)</li>
+</ul>
+</li>
+<li>Future: AVIF support via feature flag</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Optimal format selection per context; futureproof architecture.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 -c <span class="hljs-string">"from scripts.processors.image_processor import select_image_format; \
+print(select_image_format('web', has_transparency=False, is_photo=True))"</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="24-batch-image-processing">2.4 Batch Image Processing</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./scripts/processors/image_processor.py</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Add CLI interface: <code>python image_processor.py &lt;doc_id&gt;</code></li>
+<li>Support batch mode: <code>python image_processor.py --all</code></li>
+<li>Progress bar (tqdm) for multi-image processing</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Enables one-command image prep for all documents.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 scripts/processors/image_processor.py --all
+</div></code></pre>
+</li>
+</ul>
+<p><strong>Phase 2 Deliverables</strong>:</p>
+<ul>
+<li>✅ Automated print/web image variant generation</li>
+<li>✅ Image registry with metadata</li>
+<li>✅ Format-aware image processing</li>
+<li>✅ Batch processing CLI</li>
+</ul>
+<p><strong>Verification Criteria</strong>:</p>
+<ul>
+<li>Master images generate all variants correctly</li>
+<li>Registry JSON contains accurate paths + metadata</li>
+<li>WebP files 30%+ smaller than PNG equivalents</li>
+<li>Batch mode processes 50 images in &lt;5 seconds (Pillow-SIMD)</li>
+</ul>
+<hr>
+<h3 id="phase-3-web-output-generation">Phase 3: Web Output Generation</h3>
+<p><strong>Objective</strong>: Generate responsive HTML from Markdown via Pandoc + Lua filters + Jinja2 templates.</p>
+<p><strong>Dependencies</strong>: Phase 1 (config, validation), Phase 2 (image assets)</p>
+<p><strong>Tasks</strong>:</p>
+<h4 id="31-pandoc-lua-filters">3.1 Pandoc Lua Filters</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./filters/callouts.lua</code> - Convert <code>&gt; [!WARNING]</code> → styled divs</li>
+<li><code>./filters/wikilinks.lua</code> - Convert <code>[[REF-2201]]</code> → HTML links</li>
+<li><code>./filters/directives.lua</code> - Expand <code>&lt;!-- ::FIGURE --&gt;</code> directives</li>
+<li><code>./filters/pagebreak.lua</code> - Handle <code>&lt;!-- ::PAGEBREAK --&gt;</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement Pandoc AST transformations</li>
+<li>Callouts: Match <code>&gt; [!TYPE]</code> → <code>&lt;div class=&quot;callout callout-TYPE&quot;&gt;</code></li>
+<li>Wikilinks: Parse <code>[[doc-id | label]]</code> → <code>&lt;a href=&quot;/doc-id&quot;&gt;</code></li>
+<li>Directives: Parse attributes (scale, align, border, shadow, caption)</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Preserves all Markdown semantics lost in DocBook; enables rich formatting.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">echo</span> <span class="hljs-string">'&gt; [!WARNING] Test'</span> | pandoc -f markdown -t json --lua-filter=filters/callouts.lua | \
+pandoc -f json -t html
+</div></code></pre>
+</li>
+</ul>
+<h4 id="32-html-template-system">3.2 HTML Template System</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./templates/html/base.html.j2</code> - Base layout (header, footer, nav)</li>
+<li><code>./templates/html/sop.html.j2</code> - SOP-specific layout (extends base)</li>
+<li><code>./templates/html/std.html.j2</code> - STD-specific layout</li>
+<li><code>./templates/html/ref.html.j2</code> - REF-specific layout</li>
+<li><code>./templates/html/app.html.j2</code> - APP-specific layout</li>
+<li><code>./templates/html/components/header.html.j2</code> - Reusable header</li>
+<li><code>./templates/html/components/footer.html.j2</code> - Reusable footer</li>
+<li><code>./templates/html/components/toc.html.j2</code> - Table of contents</li>
+<li><code>./templates/html/partials/callout.html.j2</code> - Callout rendering</li>
+<li><code>./templates/html/partials/figure.html.j2</code> - Figure w/ caption</li>
+<li><code>./scripts/renderers/template_renderer.py</code> - Jinja2 wrapper</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement <code>TemplateRenderer</code> class</li>
+<li>Register custom filters: <code>markdown</code>, <code>date_format</code></li>
+<li>Metadata grid display (doc ID, revision, status, owner, approver)</li>
+<li>Responsive image rendering (<code>&lt;picture&gt;</code> w/ srcset)</li>
+<li>TOC generation from headings</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Separation of content (Markdown) from presentation (templates); reusable components.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 -c <span class="hljs-string">"from scripts.renderers.template_renderer import TemplateRenderer; \
+r = TemplateRenderer(); print(r.render('sop.html.j2', {'metadata': {'title': 'Test'}}))"</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="33-css-framework-integration">3.3 CSS Framework Integration</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./styles/web.css</code> - Main web stylesheet</li>
+<li><code>./styles/pdf.css</code> - PDF-specific overrides</li>
+<li><code>./styles/components/callouts.css</code> - Callout styling</li>
+<li><code>./styles/components/code.css</code> - Code block styling (Pygments)</li>
+<li><code>./styles/components/tables.css</code> - Table styling</li>
+<li><code>./styles/components/figures.css</code> - Figure/image styling</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Adopt Tailwind CSS utility classes (or equivalent)</li>
+<li>Define CSS custom properties for theming:<pre class="hljs"><code><div><span class="hljs-selector-pseudo">:root</span> {
+  <span class="hljs-attribute">--color-primary</span>: <span class="hljs-number">#0066cc</span>;
+  <span class="hljs-attribute">--color-warning</span>: <span class="hljs-number">#ff9800</span>;
+  <span class="hljs-attribute">--color-danger</span>: <span class="hljs-number">#f44336</span>;
+  <span class="hljs-attribute">--font-sans</span>: -apple-system, BlinkMacSystemFont, <span class="hljs-string">"Segoe UI"</span>, sans-serif;
+}
+</div></code></pre>
+</li>
+<li>Responsive breakpoints: 640px (mobile), 1024px (tablet), 1920px (desktop)</li>
+<li>Print media queries for PDF output</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Consistent styling; responsive design; print optimization.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Manual: Open generated HTML in browser, resize window</span>
+<span class="hljs-comment"># Check: Responsive images, readable text, proper spacing</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="34-font-loading--unicode-handling">3.4 Font Loading &amp; Unicode Handling</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./assets/fonts/.gitkeep</code> - Fonts directory</li>
+<li>Copy web fonts (WOFF2) to <code>./assets/fonts/web/</code></li>
+<li>Copy PDF fonts (TTF) to <code>./assets/fonts/pdf/</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Define <code>@font-face</code> declarations in CSS</li>
+<li>Implement font fallback stack</li>
+<li>Normalize Unicode (NFC) in text processing:<pre class="hljs"><code><div><span class="hljs-keyword">import</span> unicodedata
+text = unicodedata.normalize(<span class="hljs-string">'NFC'</span>, text)
+</div></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Consistent typography; proper emoji/special char rendering.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Manual: Check HTML displays emoji, accented characters correctly</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="35-markdown-%E2%86%92-html-converter">3.5 Markdown → HTML Converter</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/converters/web_generator.py</code> - Main conversion logic</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement <code>convert_markdown_to_html(md_path, output_path)</code>:
+<ol>
+<li>Parse YAML metadata (reuse Phase 1 validator)</li>
+<li>Run Pandoc w/ Lua filters:<pre class="hljs"><code><div>pandoc -f markdown+yaml_metadata_block -t json \
+  --lua-filter=filters/callouts.lua \
+  --lua-filter=filters/wikilinks.lua \
+  --lua-filter=filters/directives.lua \
+  input.md
+</div></code></pre>
+</li>
+<li>Process JSON AST → Python data structures</li>
+<li>Load image registry (from Phase 2)</li>
+<li>Render Jinja2 template w/ context</li>
+<li>Write HTML to <code>published/web/{doc_id}.html</code></li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Single function orchestrates full Markdown → HTML pipeline.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 scripts/converters/web_generator.py drafts/SOP-200_Create_Workackage_Sequencing_Type.md
+firefox published/web/SOP-200.html
+</div></code></pre>
+</li>
+</ul>
+<h4 id="36-syntax-highlighting-code-blocks">3.6 Syntax Highlighting (Code Blocks)</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./scripts/converters/web_generator.py</code></li>
+<li><code>./styles/components/code.css</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Use Pygments for code highlighting:<pre class="hljs"><code><div><span class="hljs-keyword">from</span> pygments <span class="hljs-keyword">import</span> highlight
+<span class="hljs-keyword">from</span> pygments.lexers <span class="hljs-keyword">import</span> get_lexer_by_name
+<span class="hljs-keyword">from</span> pygments.formatters <span class="hljs-keyword">import</span> HtmlFormatter
+</div></code></pre>
+</li>
+<li>Generate CSS classes via Pygments</li>
+<li>Support languages: Python, Bash, YAML, JSON, SQL</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Professional code formatting; better readability.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Create test Markdown with ```python code block</span>
+<span class="hljs-comment"># Verify HTML has highlighted syntax</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="37-accessibility-aria-semantic-html">3.7 Accessibility (ARIA, Semantic HTML)</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li>All templates in <code>./templates/html/</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Use semantic HTML5 elements: <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;figure&gt;</code></li>
+<li>Add ARIA landmarks: <code>role=&quot;main&quot;</code>, <code>aria-label=&quot;Document navigation&quot;</code></li>
+<li>Alt text for all images (extracted from Markdown)</li>
+<li>Color contrast ratio ≥4.5:1 (normal text)</li>
+<li>Skip-to-content link for keyboard navigation</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: WCAG 2.2 AA compliance; legal requirement (EAA 2025).</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Use axe DevTools or Lighthouse accessibility audit</span>
+<span class="hljs-comment"># Target: 0 violations, 0 warnings</span>
+</div></code></pre>
+</li>
+</ul>
+<p><strong>Phase 3 Deliverables</strong>:</p>
+<ul>
+<li>✅ Pandoc Lua filters (callouts, wikilinks, directives)</li>
+<li>✅ Jinja2 HTML templates (base + family-specific)</li>
+<li>✅ Responsive CSS framework</li>
+<li>✅ Font loading + Unicode normalization</li>
+<li>✅ Markdown → HTML converter</li>
+<li>✅ Syntax highlighting</li>
+<li>✅ WCAG 2.2 AA accessibility</li>
+</ul>
+<p><strong>Verification Criteria</strong>:</p>
+<ul>
+<li>Markdown with callouts/wikilinks renders correctly in HTML</li>
+<li>HTML displays properly on mobile/tablet/desktop</li>
+<li>All images have alt text</li>
+<li>Lighthouse accessibility score ≥90</li>
+<li>Unicode characters (emoji, accents) render correctly</li>
+</ul>
+<hr>
+<h3 id="phase-4-pdf-generation-weasyprint">Phase 4: PDF Generation (WeasyPrint)</h3>
+<p><strong>Objective</strong>: Replace Scribus with WeasyPrint for 10-15x faster PDF rendering.</p>
+<p><strong>Dependencies</strong>: Phase 3 (web HTML output)</p>
+<p><strong>Tasks</strong>:</p>
+<h4 id="41-weasyprint-integration">4.1 WeasyPrint Integration</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/renderers/pdf_generator.py</code> - PDF rendering logic</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Install WeasyPrint: <code>pip install weasyprint</code></li>
+<li>Implement <code>generate_pdf_from_html(html_path, pdf_path, css_path)</code>:<pre class="hljs"><code><div><span class="hljs-keyword">from</span> weasyprint <span class="hljs-keyword">import</span> HTML, CSS
+html = HTML(filename=html_path)
+css = CSS(filename=css_path)
+html.write_pdf(pdf_path, stylesheets=[css])
+</div></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: WeasyPrint provides 10-15x speed vs Scribus; better typography; CSS-based layout.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 scripts/renderers/pdf_generator.py published/web/SOP-200.html published/pdf/SOP-200.pdf
+evince published/pdf/SOP-200.pdf
+</div></code></pre>
+</li>
+</ul>
+<h4 id="42-pdf-specific-css-paged-media">4.2 PDF-Specific CSS (Paged Media)</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./styles/pdf.css</code> - CSS Paged Media styles</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Define page size, margins:<pre class="hljs"><code><div><span class="hljs-keyword">@page</span> {
+  <span class="hljs-attribute">size</span>: Letter;
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">1in</span> <span class="hljs-number">0.75in</span>;
+}
+</div></code></pre>
+</li>
+<li>Add running headers/footers:<pre class="hljs"><code><div><span class="hljs-keyword">@page</span> {
+  @top-center {
+    <span class="hljs-attribute">content</span>: <span class="hljs-built_in">string</span>(doc-id);
+  }
+  <span class="hljs-keyword">@bottom-right</span> {
+    <span class="hljs-selector-tag">content</span>: "<span class="hljs-selector-tag">Page</span> " <span class="hljs-selector-tag">counter</span>(<span class="hljs-selector-tag">page</span>);
+  }
+}
+</div></code></pre>
+</li>
+<li>Page breaks:<pre class="hljs"><code><div><span class="hljs-selector-tag">h1</span>, <span class="hljs-selector-tag">h2</span> { <span class="hljs-attribute">page-break-after</span>: avoid; }
+<span class="hljs-selector-tag">figure</span> { <span class="hljs-attribute">page-break-inside</span>: avoid; }
+</div></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Professional PDF layout w/ headers, footers, page numbers.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Manual: Check PDF has headers, footers, proper page breaks</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="43-metadata-embedding-pdf">4.3 Metadata Embedding (PDF)</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./scripts/renderers/pdf_generator.py</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Embed metadata in PDF:<pre class="hljs"><code><div><span class="hljs-keyword">from</span> pypdf <span class="hljs-keyword">import</span> PdfWriter, PdfReader
+<span class="hljs-comment"># After WeasyPrint generates PDF</span>
+reader = PdfReader(pdf_path)
+writer = PdfWriter()
+writer.append_pages_from_reader(reader)
+writer.add_metadata({
+    <span class="hljs-string">'/Title'</span>: metadata[<span class="hljs-string">'title'</span>],
+    <span class="hljs-string">'/Author'</span>: metadata[<span class="hljs-string">'author'</span>],
+    <span class="hljs-string">'/Subject'</span>: metadata[<span class="hljs-string">'document_id'</span>],
+    <span class="hljs-string">'/Keywords'</span>: <span class="hljs-string">', '</span>.join(metadata.get(<span class="hljs-string">'tags'</span>, []))
+})
+<span class="hljs-keyword">with</span> open(pdf_path, <span class="hljs-string">'wb'</span>) <span class="hljs-keyword">as</span> f:
+    writer.write(f)
+</div></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: PDF metadata aids searchability, document management.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>pdfinfo published/pdf/SOP-200.pdf | grep Title
+</div></code></pre>
+</li>
+</ul>
+<h4 id="44-high-resolution-image-handling">4.4 High-Resolution Image Handling</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./scripts/converters/web_generator.py</code> (add PDF variant)</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Create separate HTML for PDF w/ print images:
+<ul>
+<li>Web HTML: Uses WebP srcset (640w, 1024w, 1920w)</li>
+<li>PDF HTML: Uses 300 DPI PNG (no srcset)</li>
+</ul>
+</li>
+<li>Template conditional:<pre class="hljs"><code><div>{% if output_type == 'pdf' %}
+  &lt;img src=&quot;{{ image.print }}&quot; alt=&quot;{{ image.alt }}&quot;&gt;
+{% else %}
+  &lt;picture&gt;...&lt;/picture&gt;
+{% endif %}
+</div></code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: PDF requires high-res print images; web requires responsive variants.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Check PDF image resolution: 300 DPI</span>
+pdfimages -list published/pdf/SOP-200.pdf
+</div></code></pre>
+</li>
+</ul>
+<h4 id="45-layout-engine-abstraction">4.5 Layout Engine Abstraction</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/renderers/layout_engine.py</code> - Abstract base class</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Define <code>LayoutEngine</code> ABC:<pre class="hljs"><code><div><span class="hljs-keyword">from</span> abc <span class="hljs-keyword">import</span> ABC, abstractmethod
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LayoutEngine</span><span class="hljs-params">(ABC)</span>:</span>
+<span class="hljs-meta">    @abstractmethod</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">render_pdf</span><span class="hljs-params">(self, html_path, pdf_path, css_path=None)</span>:</span>
+        <span class="hljs-keyword">pass</span>
+
+<span class="hljs-meta">    @abstractmethod</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">supports_feature</span><span class="hljs-params">(self, feature)</span>:</span>
+        <span class="hljs-keyword">pass</span>
+</div></code></pre>
+</li>
+<li>Implement <code>WeasyPrintEngine</code> (primary)</li>
+<li>Implement <code>PagedJSEngine</code> (optional, for JavaScript support)</li>
+<li>Factory function: <code>create_layout_engine(engine_type)</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Enables future engine swaps (e.g., Paged.js for JS features).</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 -c <span class="hljs-string">"from scripts.renderers.layout_engine import create_layout_engine; \
+e = create_layout_engine('weasyprint'); print(e.supports_feature('css_paged_media'))"</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="46-scribus-migration-path">4.6 Scribus Migration Path</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./scripts/scribus_pipeline_adv_v3.py</code> (deprecate, but preserve for reference)</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Add deprecation warning to Scribus script</li>
+<li>Document migration: &quot;Use <code>python build.py build &lt;doc-id&gt;</code> instead&quot;</li>
+<li>Keep script in repo for 1-2 releases (fallback)</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Smooth transition; preserve legacy path during validation period.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Compare outputs: Scribus PDF vs WeasyPrint PDF</span>
+<span class="hljs-comment"># Visual inspection for layout parity</span>
+</div></code></pre>
+</li>
+</ul>
+<p><strong>Phase 4 Deliverables</strong>:</p>
+<ul>
+<li>✅ WeasyPrint PDF generation (2-3s per doc)</li>
+<li>✅ CSS Paged Media styles (headers, footers, page breaks)</li>
+<li>✅ PDF metadata embedding</li>
+<li>✅ High-res image handling (300 DPI)</li>
+<li>✅ Layout engine abstraction (future-proof)</li>
+<li>✅ Scribus deprecation path</li>
+</ul>
+<p><strong>Verification Criteria</strong>:</p>
+<ul>
+<li>PDF generates in <img class="emoji" alt="heart" src="data:image/png;base64,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" /> seconds (vs 10-15s Scribus)</li>
+<li>Headers/footers render correctly</li>
+<li>Page breaks logical (no orphaned headings)</li>
+<li>Images at 300 DPI resolution</li>
+<li>PDF metadata correct (title, author, keywords)</li>
+</ul>
+<hr>
+<h3 id="phase-5-batch-processing--build-orchestration">Phase 5: Batch Processing &amp; Build Orchestration</h3>
+<p><strong>Objective</strong>: Enable multi-document builds w/ dependency tracking, parallelization, incremental builds.</p>
+<p><strong>Dependencies</strong>: All previous phases (validation, images, web, PDF)</p>
+<p><strong>Tasks</strong>:</p>
+<h4 id="51-dependency-tracker">5.1 Dependency Tracker</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/core/dependency_tracker.py</code> - File hashing &amp; change detection</li>
+<li><code>./.build_cache.json</code> - Build cache (gitignored)</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement <code>DependencyTracker</code> class:
+<ul>
+<li>Hash files (SHA256)</li>
+<li>Compare hashes to cache</li>
+<li>Return <code>needs_rebuild(source, dependencies)</code> bool</li>
+<li>Update cache: <code>mark_built(source, dependencies)</code></li>
+</ul>
+</li>
+<li>Track dependencies:
+<ul>
+<li>Markdown source</li>
+<li>Images (from image registry)</li>
+<li>Templates</li>
+<li>CSS files</li>
+<li>Config files</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Incremental builds 10-100x faster for unchanged docs.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Build all docs</span>
+python3 build.py build-all
+<span class="hljs-comment"># Modify one doc</span>
+touch drafts/SOP-200_Create_Workackage_Sequencing_Type.md
+<span class="hljs-comment"># Rebuild (should only rebuild SOP-200)</span>
+python3 build.py build-all --incremental
+</div></code></pre>
+</li>
+</ul>
+<h4 id="52-parallel-build-executor">5.2 Parallel Build Executor</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/core/batch_processor.py</code> - Multiprocessing orchestrator</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement <code>batch_convert_documents(paths, max_workers)</code>:
+<ul>
+<li>Use <code>ProcessPoolExecutor</code> for CPU-bound tasks</li>
+<li>Default workers: CPU count</li>
+<li>Progress bar (tqdm)</li>
+<li>Error isolation (one doc failure doesn't stop batch)</li>
+</ul>
+</li>
+<li>Return results: <code>{success: [...], failed: [(path, error), ...]}</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Parallel processing exploits multi-core CPUs; 4-8x speedup.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>time python3 scripts/core/batch_processor.py --all
+<span class="hljs-comment"># Compare: Sequential vs parallel (expect 4-8x speedup on 4+ core CPU)</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="53-build-transactions--rollback">5.3 Build Transactions &amp; Rollback</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./scripts/core/build_transaction.py</code> - Atomic build operations</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement <code>BuildTransaction</code> class:
+<ul>
+<li>Backup files before modification</li>
+<li>Track all changes (create, modify, delete)</li>
+<li>Rollback on error: restore backups</li>
+<li>Commit on success: delete backups</li>
+</ul>
+</li>
+<li>Use in build pipeline for safety</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Atomic builds prevent partial failures corrupting outputs.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Inject error in pipeline</span>
+<span class="hljs-comment"># Verify outputs rolled back to previous state</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="54-cli-build-interface-click">5.4 CLI Build Interface (Click)</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./build.py</code> - Main build orchestrator CLI</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Implement Click commands:
+<ul>
+<li><code>build &lt;doc-id&gt;</code> - Build single document</li>
+<li><code>build-all [--category SOP|STD|REF|APP] [--incremental|--full]</code> - Batch build</li>
+<li><code>clean</code> - Remove generated files</li>
+<li><code>validate &lt;doc-id&gt;</code> - Validate metadata only</li>
+<li><code>images &lt;doc-id&gt;</code> - Process images only</li>
+</ul>
+</li>
+<li>Progress reporting (tqdm)</li>
+<li>Structured logging</li>
+<li>Exit codes (0=success, 1=failure)</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Single entry point for all build operations; scriptable.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Test all commands</span>
+python3 build.py build SOP-200
+python3 build.py build-all --category SOP --incremental
+python3 build.py clean
+python3 build.py validate SOP-200
+python3 build.py images SOP-200
+</div></code></pre>
+</li>
+</ul>
+<h4 id="55-progress-reporting--logging">5.5 Progress Reporting &amp; Logging</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./scripts/core/batch_processor.py</code></li>
+<li><code>./scripts/core/logging_config.py</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Add progress bars (tqdm):<pre class="hljs"><code><div><span class="hljs-keyword">with</span> tqdm(total=len(documents), desc=<span class="hljs-string">"Building"</span>) <span class="hljs-keyword">as</span> pbar:
+    <span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> documents:
+        pbar.set_description(<span class="hljs-string">f"Building <span class="hljs-subst">{doc}</span>"</span>)
+        <span class="hljs-comment"># ... build logic ...</span>
+        pbar.update(<span class="hljs-number">1</span>)
+</div></code></pre>
+</li>
+<li>Log to file: <code>logs/build_{timestamp}.log</code></li>
+<li>Console output: summary only (success/fail counts)</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Clear progress feedback; detailed logs for debugging.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 build.py build-all
+<span class="hljs-comment"># Check: Progress bar visible</span>
+<span class="hljs-comment"># Check: logs/build_*.log contains detailed info</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="56-error-aggregation--reporting">5.6 Error Aggregation &amp; Reporting</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./build.py</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Collect all errors during batch build</li>
+<li>Display summary at end:<pre class="hljs"><code><div>Build complete: 45 succeeded, 3 failed
+
+Failed builds:
+  • SOP-001: Metadata validation failed (missing 'approver')
+  • STD-2201: Image not found (valve.png)
+  • REF-2202: Cross-reference invalid (REF-9999)
+</div></code></pre>
+</li>
+<li>Write full error details to log file</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Batch errors easy to diagnose; actionable error messages.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Introduce errors in 2-3 docs</span>
+python3 build.py build-all
+<span class="hljs-comment"># Verify: Summary lists all failures w/ clear messages</span>
+</div></code></pre>
+</li>
+</ul>
+<p><strong>Phase 5 Deliverables</strong>:</p>
+<ul>
+<li>✅ Dependency tracker w/ content hashing</li>
+<li>✅ Parallel build executor (multiprocessing)</li>
+<li>✅ Build transactions w/ rollback</li>
+<li>✅ CLI interface (Click)</li>
+<li>✅ Progress reporting (tqdm)</li>
+<li>✅ Error aggregation &amp; summary</li>
+</ul>
+<p><strong>Verification Criteria</strong>:</p>
+<ul>
+<li>Incremental builds skip unchanged docs (verify via logs)</li>
+<li>Parallel builds utilize all CPU cores (check <code>htop</code> during build)</li>
+<li>Failed builds rollback cleanly (no corrupt outputs)</li>
+<li>CLI commands work correctly (exit codes, help text)</li>
+<li>Progress bars update in real-time</li>
+<li>Error summaries clear and actionable</li>
+</ul>
+<hr>
+<h3 id="phase-6-integration-polish--documentation">Phase 6: Integration, Polish &amp; Documentation</h3>
+<p><strong>Objective</strong>: End-to-end testing, migration guide, documentation, final polish.</p>
+<p><strong>Dependencies</strong>: All previous phases</p>
+<p><strong>Tasks</strong>:</p>
+<h4 id="61-end-to-end-pipeline-integration">6.1 End-to-End Pipeline Integration</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./build.py</code> - Integrate all components</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Full pipeline for <code>build &lt;doc-id&gt;</code>:
+<ol>
+<li>Validate metadata (Phase 1)</li>
+<li>Process images (Phase 2)</li>
+<li>Generate HTML (Phase 3)</li>
+<li>Generate PDF (Phase 4)</li>
+<li>Package release if status=Active (existing logic)</li>
+</ol>
+</li>
+<li>Error handling at each stage</li>
+<li>Transaction-based (rollback on any failure)</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Single command executes full workflow; robust error handling.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 build.py build SOP-200
+<span class="hljs-comment"># Check: HTML + PDF generated</span>
+<span class="hljs-comment"># Check: Release package created (if Active)</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="62-release-packager-integration">6.2 Release Packager Integration</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./scripts/release_packager.py</code> (extend for web outputs)</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Include HTML in release archives:<pre class="hljs"><code><div>releases/SOP/SOP-200_r1_20251201.zip
+├── source/
+│   └── SOP-200.md
+├── outputs/
+│   ├── SOP-200.pdf
+│   ├── SOP-200.html
+│   └── assets/ (images, CSS)
+├── metadata/
+│   ├── SOP-200_metadata.json
+│   └── SOP-200_images.json
+</div></code></pre>
+</li>
+<li>Timestamp format: <code>{doc_id}_r{revision}_{YYYYMMDD}.zip</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Complete release package includes all outputs + source.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Set doc status to Active</span>
+python3 build.py build SOP-200
+unzip -l releases/SOP/SOP-200_r1_*.zip
+</div></code></pre>
+</li>
+</ul>
+<h4 id="63-testing-suite">6.3 Testing Suite</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./tests/test_metadata_validator.py</code> - Unit tests for validation</li>
+<li><code>./tests/test_image_processor.py</code> - Unit tests for images</li>
+<li><code>./tests/test_web_generator.py</code> - Unit tests for HTML</li>
+<li><code>./tests/test_pdf_generator.py</code> - Unit tests for PDF</li>
+<li><code>./tests/test_batch_processor.py</code> - Integration tests for batch builds</li>
+<li><code>./tests/fixtures/</code> - Sample Markdown, images, expected outputs</li>
+<li><code>./pytest.ini</code> - Pytest configuration</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Unit tests for each module</li>
+<li>Integration tests for full pipeline</li>
+<li>Fixtures: sample docs w/ known-good outputs</li>
+<li>Test coverage target: 70%+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Automated tests prevent regressions; confidence in refactors.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>pytest tests/ -v
+pytest tests/ --cov=scripts --cov-report=html
+</div></code></pre>
+</li>
+</ul>
+<h4 id="64-migration-guide">6.4 Migration Guide</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./docs/MIGRATION.md</code> - Step-by-step migration from Scribus</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Document migration process:
+<ol>
+<li>Backup existing Scribus outputs</li>
+<li>Install new dependencies (<code>pip install -r requirements.txt</code>)</li>
+<li>Configure <code>config/local.yaml</code> (paths, settings)</li>
+<li>Process images: <code>python build.py images --all</code></li>
+<li>Test build one doc: <code>python build.py build SOP-001</code></li>
+<li>Compare outputs: Scribus PDF vs WeasyPrint PDF</li>
+<li>Full migration: <code>python build.py build-all --full</code></li>
+</ol>
+</li>
+<li>Troubleshooting common issues</li>
+<li>Rollback procedure (if needed)</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Smooth migration path; clear instructions reduce adoption friction.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Manual: Follow guide step-by-step with fresh environment</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="65-user-documentation">6.5 User Documentation</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./docs/USER_GUIDE.md</code> - End-user documentation</li>
+<li><code>./docs/ARCHITECTURE.md</code> - System architecture overview</li>
+<li><code>./docs/CONFIG.md</code> - Configuration reference</li>
+<li><code>./docs/TEMPLATES.md</code> - Template customization guide</li>
+<li><code>./docs/TROUBLESHOOTING.md</code> - Common issues &amp; solutions</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>User guide:
+<ul>
+<li>Creating new documents</li>
+<li>Metadata reference</li>
+<li>Image directives</li>
+<li>Building documents</li>
+<li>Customizing templates</li>
+</ul>
+</li>
+<li>Architecture doc:
+<ul>
+<li>Component diagram</li>
+<li>Data flow</li>
+<li>Extension points</li>
+</ul>
+</li>
+<li>Config reference:
+<ul>
+<li>All config keys documented</li>
+<li>Examples for each setting</li>
+</ul>
+</li>
+<li>Template guide:
+<ul>
+<li>Jinja2 syntax</li>
+<li>Available variables</li>
+<li>Custom filters</li>
+<li>Creating new templates</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Self-service documentation reduces support burden.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Manual: Review docs for clarity, accuracy, completeness</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="66-readme-update">6.6 README Update</h4>
+<ul>
+<li>
+<p><strong>Files to modify</strong>:</p>
+<ul>
+<li><code>./README.md</code> - Update for new pipeline</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Update workflow diagram (Markdown → Web/PDF)</li>
+<li>Quick start guide</li>
+<li>Link to detailed docs</li>
+<li>Technology stack section</li>
+<li>Contributing guidelines</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: README is first touchpoint; must reflect new system.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Manual: Review README with fresh eyes</span>
+</div></code></pre>
+</li>
+</ul>
+<h4 id="67-configuration-examples">6.7 Configuration Examples</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./config/examples/custom_fonts.yaml</code> - Custom font config</li>
+<li><code>./config/examples/high_quality_images.yaml</code> - Image quality settings</li>
+<li><code>./config/examples/fast_builds.yaml</code> - Speed-optimized config</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Commented examples for common customizations</li>
+<li>Use cases documented inline</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Examples accelerate config customization.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Test each example config</span>
+python3 build.py build SOP-001 --config config/examples/high_quality_images.yaml
+</div></code></pre>
+</li>
+</ul>
+<h4 id="68-performance-benchmarks">6.8 Performance Benchmarks</h4>
+<ul>
+<li>
+<p><strong>Files to create</strong>:</p>
+<ul>
+<li><code>./benchmarks/benchmark.py</code> - Timing script</li>
+</ul>
+</li>
+<li>
+<p><strong>Changes</strong>:</p>
+<ul>
+<li>Benchmark:
+<ul>
+<li>Single doc build time</li>
+<li>Batch build time (10, 50, 100 docs)</li>
+<li>Image processing time</li>
+<li>PDF generation time</li>
+</ul>
+</li>
+<li>Compare: Old (Scribus) vs New (WeasyPrint)</li>
+<li>Document results in README</li>
+</ul>
+</li>
+<li>
+<p><strong>Rationale</strong>: Quantify performance improvements; validate claims.</p>
+</li>
+<li>
+<p><strong>Verification</strong>:</p>
+<pre class="hljs"><code><div>python3 benchmarks/benchmark.py
+<span class="hljs-comment"># Expected: 10-15x speedup for PDF generation</span>
+</div></code></pre>
+</li>
+</ul>
+<p><strong>Phase 6 Deliverables</strong>:</p>
+<ul>
+<li>✅ Fully integrated end-to-end pipeline</li>
+<li>✅ Release packager w/ web outputs</li>
+<li>✅ Test suite (unit + integration)</li>
+<li>✅ Migration guide (Scribus → new system)</li>
+<li>✅ User documentation (guide, architecture, config, templates, troubleshooting)</li>
+<li>✅ Updated README</li>
+<li>✅ Configuration examples</li>
+<li>✅ Performance benchmarks</li>
+</ul>
+<p><strong>Verification Criteria</strong>:</p>
+<ul>
+<li>Full pipeline executes without errors</li>
+<li>Test suite passes (70%+ coverage)</li>
+<li>Migration guide successfully guides new user</li>
+<li>Documentation complete and accurate</li>
+<li>Performance benchmarks show 10-15x speedup</li>
+</ul>
+<hr>
+<h2 id="3-file-modification-plan">3. File Modification Plan</h2>
+<h3 id="31-new-files">3.1 New Files</h3>
+<p><strong>Configuration &amp; Core</strong>:</p>
+<ul>
+<li><code>./config/default.yaml</code> - System defaults</li>
+<li><code>./config/profiles/sop.yaml</code> - SOP profile</li>
+<li><code>./config/profiles/std.yaml</code> - STD profile</li>
+<li><code>./config/profiles/ref.yaml</code> - REF profile</li>
+<li><code>./config/profiles/app.yaml</code> - APP profile</li>
+<li><code>./config/examples/custom_fonts.yaml</code> - Font config example</li>
+<li><code>./config/examples/high_quality_images.yaml</code> - Image quality example</li>
+<li><code>./config/examples/fast_builds.yaml</code> - Speed-optimized example</li>
+<li><code>./scripts/core/config.py</code> - Config loader</li>
+<li><code>./scripts/core/logging_config.py</code> - Logging setup</li>
+<li><code>./scripts/core/registry.py</code> - Document registry builder</li>
+<li><code>./scripts/core/dependency_tracker.py</code> - Build cache &amp; hashing</li>
+<li><code>./scripts/core/batch_processor.py</code> - Parallel build executor</li>
+<li><code>./scripts/core/build_transaction.py</code> - Atomic builds w/ rollback</li>
+<li><code>./document_registry.json</code> - Auto-generated doc ID registry</li>
+<li><code>./.build_cache.json</code> - Build cache (gitignored)</li>
+</ul>
+<p><strong>Validation</strong>:</p>
+<ul>
+<li><code>./schemas/sop_metadata.json</code> - SOP JSON Schema</li>
+<li><code>./schemas/std_metadata.json</code> - STD JSON Schema</li>
+<li><code>./schemas/ref_metadata.json</code> - REF JSON Schema</li>
+<li><code>./schemas/app_metadata.json</code> - APP JSON Schema</li>
+<li><code>./scripts/validators/metadata_validator.py</code> - Validation logic</li>
+</ul>
+<p><strong>Image Processing</strong>:</p>
+<ul>
+<li><code>./scripts/processors/image_processor.py</code> - Image variant generation</li>
+<li><code>./assets/images/master/.gitkeep</code> - Master images directory</li>
+<li><code>./assets/images/print/.gitkeep</code> - Print variants directory</li>
+<li><code>./assets/images/web/.gitkeep</code> - Web variants directory</li>
+<li><code>./assets/xml/metadata/.gitkeep</code> - Image metadata directory</li>
+</ul>
+<p><strong>Pandoc Filters</strong>:</p>
+<ul>
+<li><code>./filters/callouts.lua</code> - Callout transformation</li>
+<li><code>./filters/wikilinks.lua</code> - Wikilink resolution</li>
+<li><code>./filters/directives.lua</code> - Directive expansion</li>
+<li><code>./filters/pagebreak.lua</code> - Page break handling</li>
+</ul>
+<p><strong>Templates</strong>:</p>
+<ul>
+<li><code>./templates/html/base.html.j2</code> - Base HTML layout</li>
+<li><code>./templates/html/sop.html.j2</code> - SOP layout</li>
+<li><code>./templates/html/std.html.j2</code> - STD layout</li>
+<li><code>./templates/html/ref.html.j2</code> - REF layout</li>
+<li><code>./templates/html/app.html.j2</code> - APP layout</li>
+<li><code>./templates/html/components/header.html.j2</code> - Header component</li>
+<li><code>./templates/html/components/footer.html.j2</code> - Footer component</li>
+<li><code>./templates/html/components/toc.html.j2</code> - TOC component</li>
+<li><code>./templates/html/partials/callout.html.j2</code> - Callout partial</li>
+<li><code>./templates/html/partials/figure.html.j2</code> - Figure partial</li>
+<li><code>./scripts/renderers/template_renderer.py</code> - Jinja2 wrapper</li>
+</ul>
+<p><strong>Converters &amp; Renderers</strong>:</p>
+<ul>
+<li><code>./scripts/converters/web_generator.py</code> - Markdown → HTML</li>
+<li><code>./scripts/renderers/pdf_generator.py</code> - HTML → PDF (WeasyPrint)</li>
+<li><code>./scripts/renderers/layout_engine.py</code> - Layout engine abstraction</li>
+</ul>
+<p><strong>Styles</strong>:</p>
+<ul>
+<li><code>./styles/web.css</code> - Main web stylesheet</li>
+<li><code>./styles/pdf.css</code> - PDF-specific styles</li>
+<li><code>./styles/components/callouts.css</code> - Callout styling</li>
+<li><code>./styles/components/code.css</code> - Code block styling</li>
+<li><code>./styles/components/tables.css</code> - Table styling</li>
+<li><code>./styles/components/figures.css</code> - Figure styling</li>
+</ul>
+<p><strong>Build System</strong>:</p>
+<ul>
+<li><code>./build.py</code> - Main build CLI (Click)</li>
+</ul>
+<p><strong>Testing</strong>:</p>
+<ul>
+<li><code>./tests/test_metadata_validator.py</code> - Validation tests</li>
+<li><code>./tests/test_image_processor.py</code> - Image tests</li>
+<li><code>./tests/test_web_generator.py</code> - HTML tests</li>
+<li><code>./tests/test_pdf_generator.py</code> - PDF tests</li>
+<li><code>./tests/test_batch_processor.py</code> - Batch tests</li>
+<li><code>./tests/fixtures/.gitkeep</code> - Test fixtures directory</li>
+<li><code>./pytest.ini</code> - Pytest config</li>
+</ul>
+<p><strong>Documentation</strong>:</p>
+<ul>
+<li><code>./docs/MIGRATION.md</code> - Migration guide</li>
+<li><code>./docs/USER_GUIDE.md</code> - User documentation</li>
+<li><code>./docs/ARCHITECTURE.md</code> - Architecture overview</li>
+<li><code>./docs/CONFIG.md</code> - Config reference</li>
+<li><code>./docs/TEMPLATES.md</code> - Template guide</li>
+<li><code>./docs/TROUBLESHOOTING.md</code> - Troubleshooting guide</li>
+</ul>
+<p><strong>Benchmarks</strong>:</p>
+<ul>
+<li><code>./benchmarks/benchmark.py</code> - Performance benchmarks</li>
+</ul>
+<p><strong>Dependencies</strong>:</p>
+<ul>
+<li><code>./requirements.txt</code> - Python dependencies (new/updated)</li>
+</ul>
+<h3 id="32-modified-files">3.2 Modified Files</h3>
+<p><strong>Existing Scripts</strong>:</p>
+<ul>
+<li><code>./scripts/release_packager.py</code> - Extend for web outputs, HTML inclusion</li>
+</ul>
+<p><strong>README</strong>:</p>
+<ul>
+<li><code>./README.md</code> - Update workflow, quick start, tech stack</li>
+</ul>
+<p><strong>Git Ignore</strong>:</p>
+<ul>
+<li><code>./.gitignore</code> - Add <code>.build_cache.json</code>, <code>config/local.yaml</code>, <code>logs/</code></li>
+</ul>
+<h3 id="33-deprecated-files">3.3 Deprecated Files</h3>
+<p><strong>Scribus Scripts</strong> (preserve for reference, add deprecation notices):</p>
+<ul>
+<li><code>./scripts/scribus_pipeline_simple.py</code> - Add deprecation warning</li>
+<li><code>./scripts/scribus_pipeline_adv_v3.py</code> - Add deprecation warning</li>
+<li><code>./scripts/layout_map.yaml</code> - Keep for reference (Scribus layouts)</li>
+</ul>
+<hr>
+<h2 id="4-backwards-compatibility-strategy">4. Backwards Compatibility Strategy</h2>
+<h3 id="41-feature-flags">4.1 Feature Flags</h3>
+<p><strong>Approach</strong>: Config-driven feature toggles for gradual rollout.</p>
+<p><strong>Implementation</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># config/default.yaml</span>
+<span class="hljs-attr">features:</span>
+  <span class="hljs-attr">use_weasyprint:</span> <span class="hljs-literal">true</span>      <span class="hljs-comment"># Toggle PDF engine (weasyprint vs scribus)</span>
+  <span class="hljs-attr">use_new_validator:</span> <span class="hljs-literal">true</span>   <span class="hljs-comment"># Toggle metadata validation</span>
+  <span class="hljs-attr">generate_web_output:</span> <span class="hljs-literal">true</span> <span class="hljs-comment"># Toggle HTML generation</span>
+  <span class="hljs-attr">enable_batch_mode:</span> <span class="hljs-literal">true</span>   <span class="hljs-comment"># Toggle parallel builds</span>
+</div></code></pre>
+<p><strong>Rationale</strong>: Enable/disable new features independently; rollback if issues arise.</p>
+<h3 id="42-dual-path-support">4.2 Dual-Path Support</h3>
+<p><strong>Approach</strong>: Support both old (Scribus) and new (WeasyPrint) PDF paths during migration.</p>
+<p><strong>Implementation</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># build.py</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate_pdf</span><span class="hljs-params">(markdown_path, engine=<span class="hljs-string">'weasyprint'</span>)</span>:</span>
+    <span class="hljs-keyword">if</span> engine == <span class="hljs-string">'scribus'</span>:
+        <span class="hljs-comment"># Legacy path (existing script)</span>
+        <span class="hljs-keyword">return</span> run_scribus_pipeline(markdown_path)
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-comment"># New path</span>
+        html_path = convert_markdown_to_html(markdown_path)
+        <span class="hljs-keyword">return</span> generate_pdf_from_html(html_path)
+</div></code></pre>
+<p><strong>Rationale</strong>: Gradual migration; compare outputs side-by-side.</p>
+<h3 id="43-graceful-degradation">4.3 Graceful Degradation</h3>
+<p><strong>Missing Dependencies</strong>: If WeasyPrint not installed, fall back to Scribus.</p>
+<p><strong>Implementation</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">try</span>:
+    <span class="hljs-keyword">from</span> weasyprint <span class="hljs-keyword">import</span> HTML
+    HAS_WEASYPRINT = <span class="hljs-literal">True</span>
+<span class="hljs-keyword">except</span> ImportError:
+    HAS_WEASYPRINT = <span class="hljs-literal">False</span>
+    logging.warning(<span class="hljs-string">"WeasyPrint not found, using Scribus fallback"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate_pdf</span><span class="hljs-params">(markdown_path)</span>:</span>
+    <span class="hljs-keyword">if</span> HAS_WEASYPRINT <span class="hljs-keyword">and</span> config.get(<span class="hljs-string">'features.use_weasyprint'</span>):
+        <span class="hljs-keyword">return</span> generate_pdf_weasyprint(markdown_path)
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">return</span> generate_pdf_scribus(markdown_path)
+</div></code></pre>
+<p><strong>Rationale</strong>: System remains functional even if new dependencies missing.</p>
+<h3 id="44-migration-path-for-existing-documents">4.4 Migration Path for Existing Documents</h3>
+<p><strong>Approach</strong>: Existing documents work without modification.</p>
+<p><strong>YAML Compatibility</strong>: New schemas validate existing metadata (all new fields optional).</p>
+<p><strong>Image Paths</strong>: Support both old and new paths:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Check multiple image locations</span>
+image_paths = [
+    <span class="hljs-string">f'assets/images/print/<span class="hljs-subst">{doc_id}</span>/<span class="hljs-subst">{image_name}</span>'</span>,  <span class="hljs-comment"># New path</span>
+    <span class="hljs-string">f'assets/images/global/<span class="hljs-subst">{image_name}</span>'</span>,          <span class="hljs-comment"># Old path</span>
+    <span class="hljs-string">f'assets/images/doc/<span class="hljs-subst">{doc_id}</span>/<span class="hljs-subst">{image_name}</span>'</span>     <span class="hljs-comment"># Old path</span>
+]
+
+<span class="hljs-keyword">for</span> path <span class="hljs-keyword">in</span> image_paths:
+    <span class="hljs-keyword">if</span> Path(path).exists():
+        <span class="hljs-keyword">return</span> path
+</div></code></pre>
+<p><strong>Rationale</strong>: No manual file moves required; works immediately.</p>
+<h3 id="45-testing-strategy-for-existing-documents">4.5 Testing Strategy for Existing Documents</h3>
+<p><strong>Approach</strong>: Validate all existing docs still build correctly.</p>
+<p><strong>Implementation</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Test script</span>
+<span class="hljs-keyword">for</span> doc <span class="hljs-keyword">in</span> drafts/*.md; <span class="hljs-keyword">do</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"Testing <span class="hljs-variable">$doc</span>"</span>
+    python build.py build $(basename <span class="hljs-variable">$doc</span> .md)
+    <span class="hljs-comment"># Compare output to existing baseline</span>
+<span class="hljs-keyword">done</span>
+</div></code></pre>
+<p><strong>Acceptance Criteria</strong>:</p>
+<ul>
+<li>All existing docs build without errors</li>
+<li>Visual comparison: new PDFs match old PDFs (layout, content)</li>
+</ul>
+<hr>
+<h2 id="5-testing--verification-plan">5. Testing &amp; Verification Plan</h2>
+<h3 id="51-unit-tests">5.1 Unit Tests</h3>
+<p><strong>Scope</strong>: Individual modules in isolation.</p>
+<p><strong>Coverage Target</strong>: 70%+</p>
+<p><strong>Test Files</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># tests/test_metadata_validator.py</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">test_valid_metadata</span><span class="hljs-params">()</span>:</span>
+    result, errors = validate_metadata(<span class="hljs-string">'tests/fixtures/valid_sop.md'</span>, <span class="hljs-string">'schemas/sop_metadata.json'</span>)
+    <span class="hljs-keyword">assert</span> result <span class="hljs-keyword">is</span> <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">assert</span> len(errors) == <span class="hljs-number">0</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">test_invalid_metadata_missing_field</span><span class="hljs-params">()</span>:</span>
+    result, errors = validate_metadata(<span class="hljs-string">'tests/fixtures/missing_title.md'</span>, <span class="hljs-string">'schemas/sop_metadata.json'</span>)
+    <span class="hljs-keyword">assert</span> result <span class="hljs-keyword">is</span> <span class="hljs-literal">False</span>
+    <span class="hljs-keyword">assert</span> any(<span class="hljs-string">'title'</span> <span class="hljs-keyword">in</span> err <span class="hljs-keyword">for</span> err <span class="hljs-keyword">in</span> errors)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">test_cross_reference_validation</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-comment"># ... test cross-ref logic ...</span>
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-comment"># tests/test_image_processor.py</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">test_generate_variants</span><span class="hljs-params">()</span>:</span>
+    master = <span class="hljs-string">'tests/fixtures/images/test_image.png'</span>
+    variants = generate_image_variants(master, <span class="hljs-string">'/tmp'</span>, <span class="hljs-string">'TEST-001'</span>)
+
+    <span class="hljs-keyword">assert</span> Path(variants[<span class="hljs-string">'print'</span>]).exists()
+    <span class="hljs-keyword">assert</span> Path(variants[<span class="hljs-string">'web'</span>][<span class="hljs-string">'640'</span>]).exists()
+
+    <span class="hljs-comment"># Check dimensions</span>
+    img = Image.open(variants[<span class="hljs-string">'web'</span>][<span class="hljs-string">'640'</span>])
+    <span class="hljs-keyword">assert</span> img.width == <span class="hljs-number">640</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">test_image_format_selection</span><span class="hljs-params">()</span>:</span>
+    fmt, quality, opts = select_image_format(<span class="hljs-string">'web'</span>, has_transparency=<span class="hljs-literal">False</span>, is_photo=<span class="hljs-literal">True</span>)
+    <span class="hljs-keyword">assert</span> fmt == <span class="hljs-string">'WEBP'</span>
+    <span class="hljs-keyword">assert</span> quality == <span class="hljs-number">85</span>
+</div></code></pre>
+<p><strong>Run Tests</strong>:</p>
+<pre class="hljs"><code><div>pytest tests/ -v --cov=scripts --cov-report=html
+</div></code></pre>
+<h3 id="52-integration-tests">5.2 Integration Tests</h3>
+<p><strong>Scope</strong>: Full pipeline workflows.</p>
+<p><strong>Test Files</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># tests/test_batch_processor.py</span>
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">test_full_pipeline_single_doc</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-comment"># Create temp document</span>
+    test_doc = create_test_document(<span class="hljs-string">'TEST-001'</span>)
+
+    <span class="hljs-comment"># Run pipeline</span>
+    result = build_document(test_doc)
+
+    <span class="hljs-comment"># Verify outputs</span>
+    <span class="hljs-keyword">assert</span> Path(<span class="hljs-string">'published/web/TEST-001.html'</span>).exists()
+    <span class="hljs-keyword">assert</span> Path(<span class="hljs-string">'published/pdf/TEST-001.pdf'</span>).exists()
+
+    <span class="hljs-comment"># Verify content</span>
+    html = Path(<span class="hljs-string">'published/web/TEST-001.html'</span>).read_text()
+    <span class="hljs-keyword">assert</span> <span class="hljs-string">'&lt;h1&gt;Test Document&lt;/h1&gt;'</span> <span class="hljs-keyword">in</span> html
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">test_batch_build_incremental</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-comment"># Build all docs</span>
+    results = batch_build(incremental=<span class="hljs-literal">False</span>)
+
+    <span class="hljs-comment"># Modify one doc</span>
+    touch(<span class="hljs-string">'drafts/TEST-001.md'</span>)
+
+    <span class="hljs-comment"># Rebuild incrementally</span>
+    results = batch_build(incremental=<span class="hljs-literal">True</span>)
+
+    <span class="hljs-comment"># Verify only TEST-001 rebuilt</span>
+    <span class="hljs-keyword">assert</span> len(results[<span class="hljs-string">'built'</span>]) == <span class="hljs-number">1</span>
+    <span class="hljs-keyword">assert</span> <span class="hljs-string">'TEST-001'</span> <span class="hljs-keyword">in</span> results[<span class="hljs-string">'built'</span>][<span class="hljs-number">0</span>]
+</div></code></pre>
+<p><strong>Run Tests</strong>:</p>
+<pre class="hljs"><code><div>pytest tests/test_batch_processor.py -v
+</div></code></pre>
+<h3 id="53-end-to-end-tests">5.3 End-to-End Tests</h3>
+<p><strong>Scope</strong>: Complete workflows with real documents.</p>
+<p><strong>Test Cases</strong>:</p>
+<ol>
+<li>
+<p><strong>New Document Creation</strong>:</p>
+<ul>
+<li>Create SOP from boilerplate</li>
+<li>Add metadata, content, images</li>
+<li>Run <code>python build.py build SOP-999</code></li>
+<li>Verify HTML + PDF outputs</li>
+</ul>
+</li>
+<li>
+<p><strong>Document Update</strong>:</p>
+<ul>
+<li>Modify existing SOP (increment revision)</li>
+<li>Run incremental build</li>
+<li>Verify only modified doc rebuilt</li>
+<li>Verify release package created (if Active)</li>
+</ul>
+</li>
+<li>
+<p><strong>Batch Build</strong>:</p>
+<ul>
+<li>Build all SOPs: <code>python build.py build-all --category SOP</code></li>
+<li>Verify all outputs generated</li>
+<li>Check build time (should be &lt;5min for 50 docs)</li>
+</ul>
+</li>
+<li>
+<p><strong>Error Handling</strong>:</p>
+<ul>
+<li>Introduce metadata error</li>
+<li>Run build</li>
+<li>Verify clear error message</li>
+<li>Verify rollback (no corrupt outputs)</li>
+</ul>
+</li>
+</ol>
+<p><strong>Run Tests</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Manual execution</span>
+pytest tests/test_e2e.py -v --slow
+</div></code></pre>
+<h3 id="54-performance-benchmarks">5.4 Performance Benchmarks</h3>
+<p><strong>Metrics</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Baseline (Scribus)</th>
+<th>Target (WeasyPrint)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single doc build</td>
+<td>10-15s</td>
+<td>2-3s</td>
+</tr>
+<tr>
+<td>Batch build (50 docs)</td>
+<td>500-750s</td>
+<td>100-150s</td>
+</tr>
+<tr>
+<td>Image processing (10 images)</td>
+<td>30s (manual)</td>
+<td>3s (automated)</td>
+</tr>
+<tr>
+<td>Incremental build (1 change)</td>
+<td>500s (full rebuild)</td>
+<td>2s (changed doc only)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Benchmark Script</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># benchmarks/benchmark.py</span>
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">from</span> pathlib <span class="hljs-keyword">import</span> Path
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">benchmark_single_build</span><span class="hljs-params">()</span>:</span>
+    start = time.time()
+    build_document(<span class="hljs-string">'SOP-200'</span>)
+    elapsed = time.time() - start
+    print(<span class="hljs-string">f"Single build: <span class="hljs-subst">{elapsed:<span class="hljs-number">.2</span>f}</span>s"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">benchmark_batch_build</span><span class="hljs-params">(doc_count=<span class="hljs-number">50</span>)</span>:</span>
+    docs = list(Path(<span class="hljs-string">'drafts'</span>).glob(<span class="hljs-string">'*.md'</span>))[:doc_count]
+
+    start = time.time()
+    batch_build(docs)
+    elapsed = time.time() - start
+
+    print(<span class="hljs-string">f"Batch build (<span class="hljs-subst">{doc_count}</span> docs): <span class="hljs-subst">{elapsed:<span class="hljs-number">.2</span>f}</span>s"</span>)
+    print(<span class="hljs-string">f"Average per doc: <span class="hljs-subst">{elapsed/doc_count:<span class="hljs-number">.2</span>f}</span>s"</span>)
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
+    benchmark_single_build()
+    benchmark_batch_build(<span class="hljs-number">50</span>)
+</div></code></pre>
+<p><strong>Run Benchmarks</strong>:</p>
+<pre class="hljs"><code><div>python3 benchmarks/benchmark.py
+</div></code></pre>
+<h3 id="55-visual-regression-tests">5.5 Visual Regression Tests</h3>
+<p><strong>Scope</strong>: PDF layout quality vs Scribus baseline.</p>
+<p><strong>Approach</strong>:</p>
+<ol>
+<li>Generate PDFs with Scribus (baseline)</li>
+<li>Generate PDFs with WeasyPrint (new)</li>
+<li>Convert both to images (via <code>pdftoppm</code>)</li>
+<li>Compare images (via <code>compare</code> from ImageMagick)</li>
+</ol>
+<p><strong>Script</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># tests/visual_regression.sh</span>
+<span class="hljs-meta">#!/bin/bash
+</span>
+DOC_ID=<span class="hljs-variable">$1</span>
+
+<span class="hljs-comment"># Generate baseline</span>
+python scripts/scribus_pipeline_adv_v3.py <span class="hljs-variable">$DOC_ID</span>
+mv published/pdf/<span class="hljs-variable">${DOC_ID}</span>.pdf published/pdf/<span class="hljs-variable">${DOC_ID}</span>_scribus.pdf
+
+<span class="hljs-comment"># Generate new</span>
+python build.py build <span class="hljs-variable">$DOC_ID</span>
+mv published/pdf/<span class="hljs-variable">${DOC_ID}</span>.pdf published/pdf/<span class="hljs-variable">${DOC_ID}</span>_weasyprint.pdf
+
+<span class="hljs-comment"># Convert to images</span>
+pdftoppm published/pdf/<span class="hljs-variable">${DOC_ID}</span>_scribus.pdf /tmp/<span class="hljs-variable">${DOC_ID}</span>_scribus -png
+pdftoppm published/pdf/<span class="hljs-variable">${DOC_ID}</span>_weasyprint.pdf /tmp/<span class="hljs-variable">${DOC_ID}</span>_weasyprint -png
+
+<span class="hljs-comment"># Compare</span>
+compare -metric RMSE /tmp/<span class="hljs-variable">${DOC_ID}</span>_scribus-1.png /tmp/<span class="hljs-variable">${DOC_ID}</span>_weasyprint-1.png /tmp/diff.png
+</div></code></pre>
+<p><strong>Acceptance</strong>: RMSE &lt; 10% (allow for font rendering differences)</p>
+<hr>
+<h2 id="6-open-questions-for-implementation">6. Open Questions for Implementation</h2>
+<h3 id="61-deferred-decisions">6.1 Deferred Decisions</h3>
+<p><strong>1. AVIF Image Support</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Add AVIF support in addition to WebP?</li>
+<li><strong>Options</strong>:
+<ul>
+<li>A) WebP only (97% browser support, faster decoding)</li>
+<li>B) WebP + AVIF fallback (20-25% smaller files, 94% support)</li>
+</ul>
+</li>
+<li><strong>Recommendation</strong>: Defer to Phase 7 (future enhancement); WebP sufficient for now</li>
+</ul>
+<p><strong>2. Paged.js for JavaScript Support</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Implement Paged.js engine alongside WeasyPrint?</li>
+<li><strong>Use Case</strong>: Interactive PDFs (forms, dynamic content)</li>
+<li><strong>Recommendation</strong>: Defer unless specific need identified; WeasyPrint covers 95% of use cases</li>
+</ul>
+<p><strong>3. Document Versioning System</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Track full document history (git-like) or simple revision numbers?</li>
+<li><strong>Options</strong>:
+<ul>
+<li>A) Simple revision numbers (existing approach)</li>
+<li>B) Full version control (diffs, branches, merges)</li>
+</ul>
+</li>
+<li><strong>Recommendation</strong>: Keep simple revision numbers; use git for version control</li>
+</ul>
+<p><strong>4. Multi-Language Support</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Plan for internationalization (i18n)?</li>
+<li><strong>Current</strong>: English only</li>
+<li><strong>Future</strong>: Spanish, French translations?</li>
+<li><strong>Recommendation</strong>: Design templates with i18n in mind (use translation keys), but defer implementation</li>
+</ul>
+<h3 id="62-technical-clarifications-needed">6.2 Technical Clarifications Needed</h3>
+<p><strong>1. Image Storage Strategy</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Store master images in repo or external storage?</li>
+<li><strong>Concern</strong>: Large binary files bloat git repo</li>
+<li><strong>Options</strong>:
+<ul>
+<li>A) Commit masters to repo (simple, self-contained)</li>
+<li>B) Use Git LFS for large images</li>
+<li>C) External storage (S3, NAS) with references</li>
+</ul>
+</li>
+<li><strong>Recommendation</strong>: Git LFS if repo size becomes issue (&gt;500MB)</li>
+</ul>
+<p><strong>2. PDF Security Settings</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Enable PDF security (password protection, printing restrictions)?</li>
+<li><strong>Use Case</strong>: Confidential SOPs</li>
+<li><strong>Recommendation</strong>: Add as optional config flag (disabled by default)</li>
+</ul>
+<p><strong>3. Watermarking for Draft/Review</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Add &quot;DRAFT&quot; or &quot;REVIEW&quot; watermark to non-Active documents?</li>
+<li><strong>Implementation</strong>: CSS <code>::after</code> pseudo-element or WeasyPrint overlay</li>
+<li><strong>Recommendation</strong>: Implement via CSS for simplicity</li>
+</ul>
+<p><strong>4. Change Tracking Between Revisions</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Generate diff reports between revisions?</li>
+<li><strong>Use Case</strong>: Highlight what changed in revision 2 vs revision 1</li>
+<li><strong>Recommendation</strong>: Defer; use <code>git diff</code> for source tracking</li>
+</ul>
+<h3 id="63-performance-optimization-decisions">6.3 Performance Optimization Decisions</h3>
+<p><strong>1. Pillow vs Pillow-SIMD</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Use standard Pillow or install Pillow-SIMD?</li>
+<li><strong>Benefit</strong>: Pillow-SIMD 40x faster with AVX2</li>
+<li><strong>Complexity</strong>: Requires compilation (not pip-installable)</li>
+<li><strong>Recommendation</strong>: Start with standard Pillow; document Pillow-SIMD upgrade path</li>
+</ul>
+<p><strong>2. Parallel Worker Count</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Default to CPU count or CPU count / 2?</li>
+<li><strong>Concern</strong>: High CPU usage may impact other processes</li>
+<li><strong>Recommendation</strong>: Default to CPU count; make configurable (<code>config.pipeline.batch.max_workers</code>)</li>
+</ul>
+<p><strong>3. Cache Invalidation Strategy</strong>:</p>
+<ul>
+<li><strong>Question</strong>: When to invalidate build cache?</li>
+<li><strong>Options</strong>:
+<ul>
+<li>A) Manual (<code>python build.py clean</code>)</li>
+<li>B) Automatic (detect config/template changes)</li>
+<li>C) Time-based (invalidate after 7 days)</li>
+</ul>
+</li>
+<li><strong>Recommendation</strong>: Automatic + manual; invalidate if config/template/schema modified</li>
+</ul>
+<h3 id="64-user-experience-decisions">6.4 User Experience Decisions</h3>
+<p><strong>1. Error Message Verbosity</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Verbose errors (full stack traces) or concise errors (summary only)?</li>
+<li><strong>Recommendation</strong>: Concise by default; verbose with <code>--debug</code> flag</li>
+</ul>
+<p><strong>2. Default Build Mode</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Incremental or full builds by default?</li>
+<li><strong>Recommendation</strong>: Incremental (faster); full with <code>--full</code> flag</li>
+</ul>
+<p><strong>3. Template Selection</strong>:</p>
+<ul>
+<li><strong>Question</strong>: Auto-select template by document category or manual override?</li>
+<li><strong>Recommendation</strong>: Auto-select (SOP → sop.html.j2); override via YAML: <code>template: custom.html.j2</code></li>
+</ul>
+<hr>
+<h2 id="7-success-criteria">7. Success Criteria</h2>
+<h3 id="71-functional-requirements">7.1 Functional Requirements</h3>
+<p><strong>Must Have</strong>:</p>
+<ol>
+<li>
+<p>✅ <strong>Metadata Validation</strong>:</p>
+<ul>
+<li>All document families (SOP, STD, REF, APP) validate against JSON schemas</li>
+<li>Clear error messages for invalid metadata</li>
+<li>Cross-reference validation (upstream/downstream APNs)</li>
+</ul>
+</li>
+<li>
+<p>✅ <strong>Web Output</strong>:</p>
+<ul>
+<li>Generate responsive HTML from Markdown</li>
+<li>Preserve all Markdown features (callouts, wikilinks, code blocks, tables)</li>
+<li>WCAG 2.2 AA accessibility compliance</li>
+</ul>
+</li>
+<li>
+<p>✅ <strong>PDF Output</strong>:</p>
+<ul>
+<li>Generate PDF from HTML via WeasyPrint</li>
+<li>CSS Paged Media support (headers, footers, page numbers, page breaks)</li>
+<li>300 DPI images</li>
+<li>Embedded metadata (title, author, keywords)</li>
+</ul>
+</li>
+<li>
+<p>✅ <strong>Image Pipeline</strong>:</p>
+<ul>
+<li>Auto-generate print variants (300 DPI PNG)</li>
+<li>Auto-generate web variants (WebP @ 640w, 1024w, 1920w)</li>
+<li>Image registry with metadata</li>
+</ul>
+</li>
+<li>
+<p>✅ <strong>Batch Processing</strong>:</p>
+<ul>
+<li>Build all documents: <code>python build.py build-all</code></li>
+<li>Incremental builds (skip unchanged docs)</li>
+<li>Parallel execution (utilize all CPU cores)</li>
+<li>Atomic transactions (rollback on error)</li>
+</ul>
+</li>
+<li>
+<p>✅ <strong>Release Packaging</strong>:</p>
+<ul>
+<li>Timestamped archives for Active documents</li>
+<li>Include source Markdown, HTML, PDF, images, metadata</li>
+</ul>
+</li>
+</ol>
+<h3 id="72-performance-requirements">7.2 Performance Requirements</h3>
+<p><strong>Targets</strong>:</p>
+<ol>
+<li>✅ <strong>Single Document Build</strong>: <img class="emoji" alt="heart" src="data:image/png;base64,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" /> seconds (vs 10-15s Scribus)</li>
+<li>✅ <strong>Batch Build (50 docs)</strong>: &lt;150 seconds (vs 500-750s Scribus)</li>
+<li>✅ <strong>Image Processing (10 images)</strong>: <img class="emoji" alt="heart" src="data:image/png;base64,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" /> seconds (vs 30s manual)</li>
+<li>✅ <strong>Incremental Build (1 changed doc)</strong>: <img class="emoji" alt="heart" src="data:image/png;base64,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" /> seconds (vs 500s full rebuild)</li>
+</ol>
+<p><strong>Measurement</strong>:</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Benchmark script</span>
+python3 benchmarks/benchmark.py
+
+<span class="hljs-comment"># Expected output:</span>
+Single build: 2.5s
+Batch build (50 docs): 125s
+Average per doc: 2.5s
+Image processing (10 images): 2.1s
+</div></code></pre>
+<h3 id="73-quality-requirements">7.3 Quality Requirements</h3>
+<p><strong>Standards</strong>:</p>
+<ol>
+<li>
+<p>✅ <strong>Code Quality</strong>:</p>
+<ul>
+<li>Pylint score: 8.0+</li>
+<li>Type hints: 80%+ coverage</li>
+<li>Docstrings: All public functions</li>
+</ul>
+</li>
+<li>
+<p>✅ <strong>Test Coverage</strong>:</p>
+<ul>
+<li>Unit tests: 70%+</li>
+<li>Integration tests: All critical paths</li>
+<li>E2E tests: 5+ scenarios</li>
+</ul>
+</li>
+<li>
+<p>✅ <strong>Accessibility</strong>:</p>
+<ul>
+<li>Lighthouse accessibility score: 90+</li>
+<li>WCAG 2.2 AA: 0 violations (via axe DevTools)</li>
+<li>Alt text: 100% of images</li>
+</ul>
+</li>
+<li>
+<p>✅ <strong>Documentation</strong>:</p>
+<ul>
+<li>User guide: Complete</li>
+<li>Migration guide: Step-by-step instructions</li>
+<li>Architecture doc: Up-to-date diagrams</li>
+<li>Inline code comments: All complex logic</li>
+</ul>
+</li>
+</ol>
+<h3 id="74-usability-requirements">7.4 Usability Requirements</h3>
+<p><strong>Ease of Use</strong>:</p>
+<ol>
+<li>✅ <strong>Single Command Build</strong>: <code>python build.py build &lt;doc-id&gt;</code></li>
+<li>✅ <strong>Clear Error Messages</strong>: Actionable feedback (e.g., &quot;Missing 'approver' in metadata&quot;)</li>
+<li>✅ <strong>Progress Feedback</strong>: Progress bars for batch operations</li>
+<li>✅ <strong>Self-Service Docs</strong>: Users can create/modify documents without support</li>
+</ol>
+<p><strong>Validation</strong>:</p>
+<ul>
+<li><strong>User Testing</strong>: 2-3 users successfully create new SOP without assistance</li>
+<li><strong>Error Recovery</strong>: Users understand and fix validation errors on first attempt</li>
+</ul>
+<hr>
+<h2 id="8-risk-mitigation">8. Risk Mitigation</h2>
+<h3 id="81-technical-risks">8.1 Technical Risks</h3>
+<p><strong>Risk 1: WeasyPrint Layout Differs from Scribus</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Medium</li>
+<li><strong>Impact</strong>: High (visual parity critical)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Visual regression tests (compare PDF renders)</li>
+<li>Pilot migration (1 document family first)</li>
+<li>Keep Scribus fallback for 2-3 releases</li>
+<li>Accept minor font rendering differences (not layout differences)</li>
+</ul>
+</li>
+</ul>
+<p><strong>Risk 2: Image Processing Too Slow</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Low (Pillow-SIMD benchmarked)</li>
+<li><strong>Impact</strong>: Medium (user frustration)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Benchmark early (Phase 2)</li>
+<li>Use Pillow-SIMD if needed (40x speedup)</li>
+<li>Parallelize image processing across documents</li>
+</ul>
+</li>
+</ul>
+<p><strong>Risk 3: Lua Filters Too Complex</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Low (Pandoc Lua API mature)</li>
+<li><strong>Impact</strong>: Medium (feature loss)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Start with simple filters (callouts, wikilinks)</li>
+<li>Extensive testing with edge cases</li>
+<li>Fallback: Python post-processing if Lua insufficient</li>
+</ul>
+</li>
+</ul>
+<p><strong>Risk 4: Batch Builds Consume Too Much Memory</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Low (Python multiprocessing isolates processes)</li>
+<li><strong>Impact</strong>: Medium (system instability)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Limit max workers (configurable)</li>
+<li>Monitor memory usage during tests</li>
+<li>Implement memory profiling (via <code>memory_profiler</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="82-process-risks">8.2 Process Risks</h3>
+<p><strong>Risk 1: Migration Takes Longer Than Expected</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Medium (complex system)</li>
+<li><strong>Impact</strong>: High (blocks adoption)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Phased rollout (validate, images, web, PDF separately)</li>
+<li>Maintain Scribus fallback</li>
+<li>Allocate buffer time (3-4 months vs 2 months)</li>
+</ul>
+</li>
+</ul>
+<p><strong>Risk 2: User Resistance to New Workflow</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Low (automation reduces manual work)</li>
+<li><strong>Impact</strong>: Medium (adoption delay)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Clear migration guide</li>
+<li>Side-by-side comparison (old vs new outputs)</li>
+<li>Training sessions / demos</li>
+<li>Gradual rollout (pilot with 1 team)</li>
+</ul>
+</li>
+</ul>
+<p><strong>Risk 3: Breaking Changes in Dependencies</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Low (mature libraries)</li>
+<li><strong>Impact</strong>: High (pipeline breaks)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Pin dependency versions (<code>requirements.txt</code>)</li>
+<li>Test on each dependency update</li>
+<li>CI/CD pipeline (automated testing)</li>
+</ul>
+</li>
+</ul>
+<h3 id="83-data-risks">8.3 Data Risks</h3>
+<p><strong>Risk 1: Corrupt Outputs from Failed Builds</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Low (atomic transactions implemented)</li>
+<li><strong>Impact</strong>: High (data loss)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Build transactions with rollback</li>
+<li>Backup before builds (optional config)</li>
+<li>Version control (git) for all sources</li>
+</ul>
+</li>
+</ul>
+<p><strong>Risk 2: Image Variants Out of Sync with Masters</strong></p>
+<ul>
+<li><strong>Likelihood</strong>: Medium (manual master updates)</li>
+<li><strong>Impact</strong>: Medium (incorrect images in outputs)</li>
+<li><strong>Mitigation</strong>:
+<ul>
+<li>Dependency tracking (rebuild if master changes)</li>
+<li>Image registry checksums</li>
+<li>Validation: warn if master newer than variants</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="9-post-implementation-roadmap">9. Post-Implementation Roadmap</h2>
+<h3 id="future-enhancements-phase-7">Future Enhancements (Phase 7+)</h3>
+<p><strong>1. Advanced Features</strong>:</p>
+<ul>
+<li><strong>AVIF Image Support</strong>: 20-25% smaller than WebP</li>
+<li><strong>Paged.js Engine</strong>: JavaScript support for interactive PDFs</li>
+<li><strong>Change Tracking</strong>: Visual diff between revisions</li>
+<li><strong>Multi-Language Support</strong>: i18n infrastructure</li>
+</ul>
+<p><strong>2. Workflow Improvements</strong>:</p>
+<ul>
+<li><strong>Live Preview</strong>: Hot-reload HTML preview during authoring</li>
+<li><strong>Collaborative Editing</strong>: Real-time multi-user Markdown editing (e.g., CRDTs)</li>
+<li><strong>Approval Workflow</strong>: Built-in review/approval tracking (vs manual status updates)</li>
+</ul>
+<p><strong>3. Integration Hooks</strong>:</p>
+<ul>
+<li><strong>AMOS Integration</strong>: Auto-import metadata from AMOS (Swiss-AS)</li>
+<li><strong>SharePoint Publishing</strong>: Auto-upload outputs to SharePoint</li>
+<li><strong>Email Notifications</strong>: Notify stakeholders on document updates</li>
+</ul>
+<p><strong>4. Analytics &amp; Reporting</strong>:</p>
+<ul>
+<li><strong>Document Usage Metrics</strong>: Track views, downloads</li>
+<li><strong>Build History Dashboard</strong>: Visualize build times, failures</li>
+<li><strong>Compliance Reporting</strong>: Generate audit logs (who changed what, when)</li>
+</ul>
+<h3 id="maintenance-plan">Maintenance Plan</h3>
+<p><strong>Regular Tasks</strong>:</p>
+<ol>
+<li>
+<p><strong>Dependency Updates</strong> (monthly):</p>
+<ul>
+<li>Run <code>pip list --outdated</code></li>
+<li>Test updates in dev environment</li>
+<li>Update <code>requirements.txt</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Schema Evolution</strong> (as needed):</p>
+<ul>
+<li>Add new metadata fields</li>
+<li>Update JSON schemas</li>
+<li>Maintain backwards compatibility</li>
+</ul>
+</li>
+<li>
+<p><strong>Template Refinements</strong> (quarterly):</p>
+<ul>
+<li>Update CSS for design improvements</li>
+<li>Add new components (e.g., data tables, flowcharts)</li>
+</ul>
+</li>
+<li>
+<p><strong>Performance Tuning</strong> (biannual):</p>
+<ul>
+<li>Profile build times</li>
+<li>Optimize bottlenecks</li>
+<li>Update benchmarks</li>
+</ul>
+</li>
+</ol>
+<p><strong>Long-Term Support</strong>:</p>
+<ul>
+<li><strong>LTS Branch</strong>: Maintain stable branch for production (bug fixes only)</li>
+<li><strong>Feature Branch</strong>: Active development for new features</li>
+<li><strong>Release Cycle</strong>: Quarterly releases (minor versions), annual major versions</li>
+</ul>
+<hr>
+<h2 id="10-appendix">10. Appendix</h2>
+<h3 id="101-technology-reference">10.1 Technology Reference</h3>
+<p><strong>Core Dependencies</strong>:</p>
+<pre class="hljs"><code><div># requirements.txt
+pandoc&gt;=3.6
+PyYAML&gt;=6.0
+jsonschema&gt;=4.0
+Pillow&gt;=10.0
+weasyprint&gt;=60.0
+Jinja2&gt;=3.1
+click&gt;=8.1
+tqdm&gt;=4.66
+Pygments&gt;=2.17
+pypdf&gt;=3.0
+</div></code></pre>
+<p><strong>Optional Dependencies</strong>:</p>
+<pre class="hljs"><code><div># requirements-dev.txt
+pytest&gt;=7.4
+pytest-cov&gt;=4.1
+pylint&gt;=3.0
+black&gt;=23.0
+isort&gt;=5.12
+memory-profiler&gt;=0.61
+</div></code></pre>
+<h3 id="102-glossary">10.2 Glossary</h3>
+<p><strong>Terms</strong>:</p>
+<ul>
+<li><strong>AST</strong>: Abstract Syntax Tree (Pandoc's intermediate representation)</li>
+<li><strong>DocBook</strong>: XML format (deprecated in new pipeline)</li>
+<li><strong>JSON Schema</strong>: Validation standard for JSON/YAML data</li>
+<li><strong>Lua Filter</strong>: Pandoc plugin for AST transformations</li>
+<li><strong>Paged Media</strong>: CSS module for print layout (page sizes, headers, footers)</li>
+<li><strong>WCAG</strong>: Web Content Accessibility Guidelines</li>
+<li><strong>WeasyPrint</strong>: Python library for HTML → PDF rendering</li>
+<li><strong>WOFF2</strong>: Web font format (compressed, variable font support)</li>
+</ul>
+<h3 id="103-directory-structure-final-state">10.3 Directory Structure (Final State)</h3>
+<pre class="hljs"><code><div>SSP_Document_Publish_Pipeline/
+├── assets/
+│   ├── fonts/
+│   │   ├── web/          # WOFF2 fonts
+│   │   └── pdf/          # TTF fonts
+│   ├── images/
+│   │   ├── master/       # Original high-res images
+│   │   ├── print/        # 300 DPI PNG variants
+│   │   └── web/          # WebP variants (640w, 1024w, 1920w)
+│   └── xml/
+│       └── metadata/     # Image registries (JSON)
+├── benchmarks/
+│   └── benchmark.py      # Performance tests
+├── config/
+│   ├── default.yaml      # System defaults
+│   ├── profiles/
+│   │   ├── sop.yaml
+│   │   ├── std.yaml
+│   │   ├── ref.yaml
+│   │   └── app.yaml
+│   └── examples/         # Config examples
+├── docs/
+│   ├── MIGRATION.md
+│   ├── USER_GUIDE.md
+│   ├── ARCHITECTURE.md
+│   ├── CONFIG.md
+│   ├── TEMPLATES.md
+│   └── TROUBLESHOOTING.md
+├── drafts/               # Source Markdown files
+├── filters/              # Pandoc Lua filters
+│   ├── callouts.lua
+│   ├── wikilinks.lua
+│   ├── directives.lua
+│   └── pagebreak.lua
+├── logs/                 # Build logs (gitignored)
+├── plans/                # Implementation plans (this doc)
+├── prompts/              # Planning prompts
+├── published/
+│   ├── pdf/              # Generated PDFs
+│   └── web/              # Generated HTML
+├── releases/             # Release archives (timestamped zips)
+├── research/             # Research documents
+├── schemas/              # JSON schemas for validation
+│   ├── sop_metadata.json
+│   ├── std_metadata.json
+│   ├── ref_metadata.json
+│   └── app_metadata.json
+├── scripts/
+│   ├── core/
+│   │   ├── config.py
+│   │   ├── logging_config.py
+│   │   ├── registry.py
+│   │   ├── dependency_tracker.py
+│   │   ├── batch_processor.py
+│   │   └── build_transaction.py
+│   ├── validators/
+│   │   └── metadata_validator.py
+│   ├── processors/
+│   │   └── image_processor.py
+│   ├── converters/
+│   │   └── web_generator.py
+│   ├── renderers/
+│   │   ├── template_renderer.py
+│   │   ├── pdf_generator.py
+│   │   └── layout_engine.py
+│   ├── release_packager.py  # (updated)
+│   └── [deprecated scribus scripts]
+├── styles/
+│   ├── web.css
+│   ├── pdf.css
+│   └── components/
+│       ├── callouts.css
+│       ├── code.css
+│       ├── tables.css
+│       └── figures.css
+├── templates/
+│   ├── html/
+│   │   ├── base.html.j2
+│   │   ├── sop.html.j2
+│   │   ├── std.html.j2
+│   │   ├── ref.html.j2
+│   │   ├── app.html.j2
+│   │   ├── components/
+│   │   └── partials/
+│   └── [existing Scribus templates]
+├── tests/
+│   ├── fixtures/         # Test data
+│   ├── test_metadata_validator.py
+│   ├── test_image_processor.py
+│   ├── test_web_generator.py
+│   ├── test_pdf_generator.py
+│   └── test_batch_processor.py
+├── build.py              # Main build CLI
+├── requirements.txt      # Python dependencies
+├── requirements-dev.txt  # Dev dependencies
+├── pytest.ini            # Pytest config
+├── .build_cache.json     # Build cache (gitignored)
+└── document_registry.json # Auto-generated doc registry
+</div></code></pre>
+<hr>
+<p><strong>END OF IMPLEMENTATION PLAN</strong></p>
+<p><em>This plan is ready for execution by Claude Code (implementation stage).</em></p>
+<p><strong>Next Steps</strong>:</p>
+<ol>
+<li>Review plan for completeness</li>
+<li>Confirm approach with user</li>
+<li>Execute phase-by-phase via <code>/taches-cc-resources:run-plan</code> command</li>
+<li>Report progress after each phase</li>
+<li>Adapt as needed based on implementation discoveries</li>
+</ol>
+
+</body>
+</html>
